@@ -2,8 +2,8 @@ flask==3.0.3
 africastalking==1.2.2
 gunicorn==22.0.0
 requests==2.32.3
-pydantic>=1.10.0,<2.0.0
-fastapi>=0.95.0,<0.100.0
+pydantic==1.10.12
+fastapi==0.95.2
 rasa==3.6.20
 rasa-sdk==3.6.2
 pandas==2.2.3
