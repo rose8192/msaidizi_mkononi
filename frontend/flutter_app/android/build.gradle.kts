@@ -15,8 +15,9 @@ subprojects {
                 }
                 android.compileSdkVersion(36)
                 
-                // Force targetSdk for all subprojects to match compileSdk
+                // Force configuration for all subprojects
                 android.defaultConfig {
+                    minSdk = 24
                     targetSdk = 36
                 }
             }
