@@ -22,7 +22,6 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # Adjust to your local version if needed
           channel: 'stable'
 
       - name: Get dependencies
@@ -36,7 +35,7 @@ jobs:
           flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: msaidizi-mkononi-apk
           path: frontend/flutter_app/build/app/outputs/flutter-apk/app-release.apk
@@ -48,10 +47,3 @@ jobs:
           files: frontend/flutter_app/build/app/outputs/flutter-apk/app-release.apk
           tag_name: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
-          body: |
-            Latest Msaidizi Mkononi APK build.
-            - Fixed Floating Mic UI
-            - Updated Backend Endpoint
-            - Improved UI hint text
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
