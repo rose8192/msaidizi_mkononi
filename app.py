@@ -67,6 +67,12 @@ def log_interaction(sender, message, responses):
 @app.route('/analytics/data', methods=['GET'])
 def get_analytics():
     """Endpoint for the analytics dashboard to get live data."""
+    # Simple hardcoded admin check for demo purposes
+    # In production, use Flask-Login or JWT
+    auth = request.authorization
+    if not auth or not (auth.username == 'admin' and auth.password == 'admin123'):
+        return jsonify({"error": "Unauthorized"}), 401
+        
     try:
         db_path = os.path.join(os.getcwd(), 'analytics.db')
         conn = sqlite3.connect(db_path)
