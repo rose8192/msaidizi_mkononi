@@ -1,0 +1,9 @@
+flask==3.0.3
+africastalking==1.2.2
+gunicorn==22.0.0
+requests==2.32.3
+pydantic<1.10.10
+fastapi<0.100.0
+# SpeechRecognition==3.10.4
+# pyttsx3==2.90
+# PyAudio==0.2.14

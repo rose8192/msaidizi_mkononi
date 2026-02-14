@@ -38,7 +38,7 @@ Thumbs.db
 
 # Logs
 *.log
-*.txt
+# *.txt  <-- COMMENTED OUT TO ALLOW requirements.txt
 build_log_*.txt
 init_log.txt
 
