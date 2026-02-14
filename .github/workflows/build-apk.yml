@@ -14,37 +14,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: 2. Set up Java 17 (Required for modern Android builds)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
-      - name: Set up Flutter
+      - name: 3. Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      - name: Get dependencies
+      - name: 4. Debug Information
+        run: |
+          echo "Flutter Version:"
+          flutter --version
+          echo "Java Version:"
+          java -version
+          echo "Flutter Doctor:"
+          flutter doctor
+
+      - name: 5. Get Dependencies
         run: |
           cd frontend/flutter_app
           flutter pub get
 
-      - name: Build APK
+      - name: 6. Build Release APK
         run: |
           cd frontend/flutter_app
+          # Using --no-tree-shake-icons to avoid common font icon issues in CI
           flutter build apk --release --no-tree-shake-icons
 
-      - name: Upload APK Artifact
+      - name: 7. Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: msaidizi-mkononi-apk
           path: frontend/flutter_app/build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Create Release
+      - name: 8. Create GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
