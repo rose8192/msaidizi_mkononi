@@ -14,7 +14,7 @@ subprojects {
                     android.namespace = "com.msaidizi_mkononi.${project.name.replace("-", "_")}"
                 }
                 // Ensure all plugins use the same compileSdk as the main app
-                android.compileSdkVersion(34)
+                android.compileSdkVersion(36)
             }
         }
     }

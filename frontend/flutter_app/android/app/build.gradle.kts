@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.msaidizi_mkononi.msaidizi_mkononi_app"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
