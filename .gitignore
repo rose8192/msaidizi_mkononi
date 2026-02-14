@@ -14,17 +14,17 @@ ENV/
 models/
 graph.html
 
-# Flutter artifacts
-frontend/flutter_app/.dart_tool/
-frontend/flutter_app/build/
-frontend/flutter_app/android/app/build/
-frontend/flutter_app/android/.gradle/
-frontend/flutter_app/ios/Flutter/Generated.xcconfig
-frontend/flutter_app/ios/Flutter/flutter_export_environment.sh
-frontend/flutter_app/.flutter-plugins
-frontend/flutter_app/.flutter-plugins-dependencies
-frontend/flutter_app/.packages
-frontend/flutter_app/pubspec.lock
+# Flutter & Build artifacts
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+android/app/build/
+android/.gradle/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
 
 # IDEs
 .idea/
