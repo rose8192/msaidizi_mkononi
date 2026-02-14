@@ -1,19 +1,25 @@
+workflow_extensions:
+  android_build_steps: &android_build_steps
+    name: Build Android APK
+    script: |
+      cd frontend/flutter_app
+      flutter pub get
+      flutter clean
+      flutter build apk --release --no-tree-shake-icons
+
 workflows:
   android-release:
-    name: Build Android APK
+    name: Android Release APK Build
     instance_type: mac_mini_m1
     max_build_duration: 60
-
     environment:
       flutter: stable
       java: 17
-
     scripts:
-      - cd frontend/flutter_app
-      - flutter clean
-      - flutter pub get
-      - flutter doctor
-      - flutter build apk --release
-
+      - *android_build_steps
     artifacts:
       - frontend/flutter_app/build/app/outputs/flutter-apk/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - wanjiru.njeri22@students.dkut.ac.ke # From your screenshot
