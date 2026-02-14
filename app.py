@@ -4,40 +4,66 @@ import os
 import requests
 import re
 import json
+import time
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 
 # Health check route
 @app.route('/', methods=['GET'])
 def health_check():
-    return jsonify({"status": "Msaidizi Mkononi backend is running"}), 200
+    return jsonify({
+        "status": "Msaidizi Mkononi backend is running",
+        "rasa_url": RASA_URL,
+        "timestamp": time.time()
+    }), 200
 
 # Chatbot endpoint
 @app.route('/chat', methods=['POST'])
 @app.route('/webhooks/rest/webhook', methods=['POST'])
 def rasa_proxy():
+    payload = request.json
+    sender = payload.get('sender', 'unknown')
+    message = payload.get('message', '')
+    
+    print(f"[CHAT] Received message from {sender}: {message}")
+    
     try:
-        payload = request.json
-        sender = payload.get('sender', 'unknown')
-        message = payload.get('message', '')
-        
-        # Apply Smart Intent Guard to the message
+        # Apply Smart Intent Guard
         is_valid, guard_response = smart_intent_guard(message)
         if not is_valid:
+            print(f"[GUARD] Blocked message: {guard_response}")
             return jsonify([{"text": guard_response}])
 
-        # Forward to Rasa
-        r = requests.post(RASA_URL, json=payload, timeout=30)
-        responses = r.json()
+        # Forward to Rasa with Retry Logic for Cold Starts
+        max_retries = 3
+        retry_delay = 2
+        responses = None
         
+        for attempt in range(max_retries):
+            try:
+                print(f"[RASA] Forwarding to Rasa (Attempt {attempt + 1})...")
+                r = requests.post(RASA_URL, json=payload, timeout=45)
+                r.raise_for_status()
+                responses = r.json()
+                print(f"[RASA] Success! Received {len(responses)} responses.")
+                break
+            except (requests.exceptions.RequestException, ValueError) as e:
+                print(f"[RASA ERROR] Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                else:
+                    raise
+
         # Log to Analytics Database
         log_interaction(sender, message, responses)
-        
         return jsonify(responses)
+
     except Exception as e:
-        print(f"[PROXY ERROR] {e}")
-        return jsonify([{"text": "Error: Backend unreachable"}]), 503
+        print(f"[PROXY ERROR] Final failure: {e}")
+        return jsonify([{"text": "Error: Msaidizi Mkononi is waking up. Please try again in 30 seconds."}]), 503
 
 def log_interaction(sender, message, responses):
     """Logs the interaction to the SQLite database for the analytics dashboard."""

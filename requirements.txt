@@ -9,6 +9,7 @@ africastalking
 requests
 pandas
 python-dotenv
+flask-cors
 aiofiles
 python-multipart
 structlog
