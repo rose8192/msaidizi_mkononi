@@ -1,21 +1,24 @@
-flask==3.0.3
-africastalking==1.2.2
-gunicorn==22.0.0
-requests==2.32.3
-pydantic==1.10.12
-fastapi==0.95.2
+# Core Services
 rasa==3.6.20
 rasa-sdk==3.6.2
-pandas==2.2.3
-python-dotenv==1.0.1
-aiofiles==24.1.0
-python-multipart==0.0.9
-structlog==24.4.0
-flask-limiter==3.8.0
-SQLAlchemy==1.4.54
-marshmallow==3.23.1
-tenacity==9.0.0
-pyyaml==6.0.2
-# SpeechRecognition==3.10.4
-# pyttsx3==2.90
-# PyAudio==0.2.14
+flask<3.0.0
+gunicorn
+
+# Connectors & Tools
+africastalking
+requests
+pandas
+python-dotenv
+aiofiles
+python-multipart
+structlog
+flask-limiter
+SQLAlchemy<2.0.0
+marshmallow
+tenacity
+pyyaml
+
+# Fix for Rasa 3.x conflicts
+pydantic<2.0.0
+fastapi<0.100.0
+typing-extensions<5.0.0
