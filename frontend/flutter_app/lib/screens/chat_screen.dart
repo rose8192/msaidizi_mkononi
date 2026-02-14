@@ -404,7 +404,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: (provider.language == 'sw' ? 'Andika ujumbe...' : 'Type a message...'),
+                        hintText: (provider.language == 'sw' ? 'Andika ujumbe... (NEW)' : 'Type a message... (NEW)'),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       ),
