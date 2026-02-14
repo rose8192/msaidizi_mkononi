@@ -2,8 +2,20 @@ flask==3.0.3
 africastalking==1.2.2
 gunicorn==22.0.0
 requests==2.32.3
-pydantic<1.10.10
-fastapi<0.100.0
+pydantic>=1.10.0,<2.0.0
+fastapi>=0.95.0,<0.100.0
+rasa==3.6.20
+rasa-sdk==3.6.2
+pandas==2.2.3
+python-dotenv==1.0.1
+aiofiles==24.1.0
+python-multipart==0.0.9
+structlog==24.4.0
+flask-limiter==3.8.0
+SQLAlchemy==1.4.54
+marshmallow==3.23.1
+tenacity==9.0.0
+pyyaml==6.0.2
 # SpeechRecognition==3.10.4
 # pyttsx3==2.90
 # PyAudio==0.2.14
