@@ -1,0 +1,158 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hi
+    - hello
+    - jambo
+    - habari
+    - salamu
+    - mambo
+
+- intent: goodbye
+  examples: |
+    - bye
+    - kwaheri
+    - asante
+    - goodbye
+    - see you
+
+- intent: hospital_search
+  examples: |
+    - hospitali
+    - tafuta hospitali
+    - ninahitaji hospitali
+    - hospitali karibu
+    - hospitals near me
+
+- intent: kra_pin
+  examples: |
+    - kra
+    - kodi
+    - tax
+    - ushuru
+    - pin ya kra
+    - kra services
+
+- intent: shif_info
+  examples: |
+    - shif
+    - bima ya afya
+    - health insurance
+    - nhif
+    - michango ya shif
+
+- intent: huduma_menu
+  examples: |
+    - huduma
+    - huduma centre
+    - huduma centers
+    - government services
+
+- intent: huduma_service_info
+  examples: |
+    - kitambulisho
+    - id
+    - pasipoti
+    - passport
+    - cheti cha kuzaliwa
+    - birth certificate
+    - cheti cha kifo
+    - death certificate
+    - cheti cha ndoa
+    - marriage certificate
+
+- intent: huduma_centres_search
+  examples: |
+    - huduma centres wapi
+    - huduma centre iko wapi
+    - huduma centres karibu
+    - centres ya huduma
+
+- intent: menu
+  examples: |
+    - menu
+    - huduma zilizopo
+    - options
+    - orodha
+
+- intent: inform_county
+  examples: |
+    - nairobi
+    - kisumu
+    - mombasa
+    - nakuru
+    - nyeri
+    - eldoret
+    - kiambu
+    - kaunti ya nairobi
+    - nairobi county
+
+- intent: inform_level
+  examples: |
+    - level 5
+    - 5
+    - level five
+    - level 4
+    - 4
+    - level 6
+    - 6
+    - level 3
+    - 3
+    - level 2
+    - 2
+    - level 1 
+
+- intent: choose_language_sw
+  examples: |
+    - kiswahili
+    - swahili
+    - ongea kiswahili
+    - tumia kiswahili
+
+- intent: choose_language_en
+  examples: |
+    - english
+    - speak english
+    - use english
+
+- intent: nlu_fallback
+  examples: |
+    - asdfghjk
+    - 12345
+    - blabla
+    - random
+
+# Menu selection intents (FIXED: removed conflicting examples)
+- intent: menu_selection_hospital
+  examples: |
+    - 1.
+    - 1. hospitali
+    - hospitali 1
+    - option 1
+    - chagua 1
+
+- intent: menu_selection_kra
+  examples: |
+    - 2.
+    - 2. kra
+    - kra 2
+    - option 2
+    - chagua 2
+
+- intent: menu_selection_shif
+  examples: |
+    - 3.
+    - 3. shif
+    - shif 3
+    - option 3
+    - chagua 3
+
+- intent: menu_selection_huduma
+  examples: |
+    - 4.
+    - 4. huduma
+    - huduma 4
+    - option 4
+    - chagua 4

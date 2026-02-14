@@ -1,0 +1,92 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "habari", "mambo", "poa", "sasa", "hello", "hi", "karibu", "jambo", "hey", "mabuda"
+      ],
+      "responses": [
+        "Karibu Msaidizi Mkononi! Unataka nikupe msaada na nini leo?",
+        "Poa sana! Niko hapa kusaidia. Unahitaji huduma gani?",
+        "Habari za mchana! Chagua: Hospitali, KRA, Huduma, au nyingine?"
+      ],
+      "context": [""]
+    },
+    {
+      "tag": "hospital_search",
+      "patterns": [
+        "nataka hospitali", "tafuta hospitali", "hospitali za", "level 5", "level 6",
+        "hospital near me", "hospitali ya wazazi", "mama na mtoto", "hospitali nairobi",
+        "hospitali kisumu", "nataka level 4", "hospitali ya watoto", "nataka dental"
+      ],
+      "responses": ["Tafuta hospitali..."],
+      "context": ["hospital_county", "hospital_level"]
+    },
+    {
+      "tag": "kra_pin",
+      "patterns": [
+        "nataka pin", "kupata pin", "kra pin", "forgot pin", "register itax",
+        "sijui pin yangu", "pin ya kra", "how to get kra pin", "nimepoteza pin"
+      ],
+      "responses": ["Hii ndiyo hatua za kupata KRA PIN:"],
+      "context": [""]
+    },
+    {
+      "tag": "kra_tax",
+      "patterns": [
+        "kulipa ushuru", "file return", "nataka kulipa tax", "ushuru wa mapato",
+        "how to pay tax", "lipa kra", "itax return", "nimechelewa kulipa"
+      ],
+      "responses": ["Hii ndiyo jinsi ya kulipa ushuru wa mapato:"],
+      "context": [""]
+    },
+    {
+      "tag": "huduma_centre",
+      "patterns": [
+        "huduma centre", "huduma center", "huduma gani", "huduma karibu",
+        "nataka id", "passport huduma", "birth certificate", "huduma nairobi"
+      ],
+      "responses": ["Hizi ndizo Huduma Centres karibu nawe:"],
+      "context": ["huduma_location"]
+    },
+    {
+      "tag": "shif_info",
+      "patterns": [
+        "shif ni nini", "social health insurance", "nataka kujiunga shif",
+        "how to register shif", "shif hospitali", "lipa shif", "shif contributions",
+        "michango ya shif", "shif michango gani", "jinsi ya kulipa shif"
+      ],
+      "responses": ["Hapa kuna maelezo kuhusu SHIF:"],
+      "context": [""]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "asante",
+        "thanks",
+        "bye",
+        "tutaonana",
+        "kwa heri",
+        "sawa",
+        "poa",
+        "okay"
+      ],
+      "responses": [
+        "Asante kwa kutumia Msaidizi Mkononi! Karibu tena!",
+        "Kazi poa! Tutaonana!",
+        "Hongera! Umepata pointi 10 za civic education!"
+      ],
+      "context": [""]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "nsaidie", "help", "menu", "nataka orodha", "unaweza kufanya nini"
+      ],
+      "responses": [
+        "Hapa ndoto huduma ninaweza kusaidia:\n\n1. Tafuta Hospitali (Level, Kaunti, Huduma)\n2. KRA (PIN, Kulipa Ushuru)\n3. Huduma Centres (ID, Passport, Birth Cert)\n4. SHIF Info & Hospitali\n\nAndika tu unachotaka! Au sema 'menu' tena."
+      ],
+      "context": [""]
+    }
+  ]
+}

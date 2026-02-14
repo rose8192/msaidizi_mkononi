@@ -1,0 +1,126 @@
+version: "3.1"
+rules:
+  - rule: Greet shows language menu
+    steps:
+      - intent: greet
+      - action: action_language_menu
+
+  - rule: Set language then show services
+    steps:
+      - intent: choose_language
+      - action: action_set_language
+      - action: action_service_menu
+
+  - rule: Enforce language persistence on KRA
+    steps:
+      - intent: kra_info
+      - action: action_force_language_persistence
+      - action: action_kra_info
+
+  - rule: Enforce language persistence on SHIF
+    steps:
+      - intent: shif_info
+      - action: action_force_language_persistence
+      - action: action_shif_info
+
+  - rule: SHIF - show sub-menu after selection
+    condition:
+      - slot_was_set:
+          - current_service: shif
+    steps:
+      - action: action_shif_info
+      - action: utter_shif_followup
+
+  - rule: Huduma locator
+    steps:
+      - intent: huduma_locator
+      - action: action_force_language_persistence
+      - action: huduma_locator_form
+      - active_loop: huduma_locator_form
+
+  - rule: Submit huduma locator form
+    condition:
+      - active_loop: huduma_locator_form
+    steps:
+      - action: huduma_locator_form
+      - active_loop: null
+      - action: action_huduma_menu
+
+  - rule: Enforce language persistence on Huduma
+    steps:
+      - intent: huduma_info
+      - action: action_force_language_persistence
+      - action: action_huduma_flow
+
+  - rule: Enforce language persistence on hospital search
+    steps:
+      - intent: hospital_search
+      - action: action_force_language_persistence
+      - action: hospital_form
+      - active_loop: hospital_form
+
+  - rule: Submit hospital form
+    condition:
+      - active_loop: hospital_form
+    steps:
+      - action: hospital_form
+      - active_loop: null
+      - action: action_hospital_search
+
+  - rule: Enforce language persistence on Goodbye
+    steps:
+      - intent: goodbye
+      - action: action_force_language_persistence
+      - action: utter_goodbye
+
+  - rule: Enforce language persistence on NTSA
+    steps:
+      - intent: ntsa_info
+      - action: action_force_language_persistence
+      - action: action_ntsa_flow
+
+  - rule: Enforce language persistence on Police Clearance
+    steps:
+      - intent: police_clearance_info
+      - action: action_force_language_persistence
+      - action: action_police_clearance_flow
+
+  - rule: Enforce language persistence on Business Reg
+    steps:
+      - intent: business_reg_info
+      - action: action_force_language_persistence
+      - action: action_business_reg_flow
+
+  - rule: Enforce language persistence on HELB
+    steps:
+      - intent: helb_info
+      - action: action_force_language_persistence
+      - action: action_helb_flow
+
+  - rule: Enforce language persistence on eCitizen General
+    steps:
+      - intent: ecitizen_general
+      - action: action_force_language_persistence
+      - action: action_ecitizen_general
+
+  - rule: Chitchat
+    steps:
+      - intent: chitchat
+      - action: utter_chitchat
+
+  - rule: Deny service
+    steps:
+      - intent: deny_service
+      - action: utter_deny_service
+
+  - rule: Enforce language persistence on Fallback
+    steps:
+      - intent: nlu_fallback
+      - action: action_force_language_persistence
+      - action: action_default_fallback
+
+  - rule: Enforce language persistence on Out of scope
+    steps:
+      - intent: out_of_scope
+      - action: action_force_language_persistence
+      - action: action_default_fallback

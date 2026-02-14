@@ -1,0 +1,161 @@
+version: "3.1"
+nlu:
+  - intent: greet
+    examples: |
+      - habari
+      - mambo
+      - niaje
+      - hujambo
+  - intent: goodbye
+    examples: |
+      - kwaheri
+      - tutaonana
+      - baadaye
+  - intent: chitchat
+    examples: |
+      - mzuri
+      - sawa
+      - niko poa
+      - ni sawa
+      - poa sana
+  - intent: deny_service
+    examples: |
+      - sitaki kra pin
+      - sihitaji kra
+      - sitaki huduma
+      - hapana sitaki
+      - sihitaji bima
+      - sitaki police clearance
+      - hapana
+      - la sitaki
+      - sitaki helb
+      - sitaki kuregister
+      - sitaki maombi haya
+      - sihitaji maelezo haya
+      - acha
+      - sitaki
+      - sihitaji
+  - intent: affirm
+    examples: |
+      - ndiyo
+      - naam
+      - sawa
+      - vyema
+      - ni kweli
+      - eeh
+      - ndio
+  - intent: deny
+    examples: |
+      - hapana
+      - la
+      - sitaki
+      - sio sasa
+      - kamwe
+      - hapana asante
+  - intent: hospital_search
+    examples: |
+      - onyesha hospitali [Nairobi](county)
+      - orodhesha hospitali level [4](level) [Mombasa](county)
+      - hospitali level [5](level) [Kiambu](county)
+      - tafuta hospitali [Kisumu](county)
+      - wapi naweza kupata hospitali
+      - hospitali zilizo karibu
+      - nahitaji kituo cha afya
+  - intent: huduma_locator
+    examples: |
+      - huduma centre [Nairobi](county) iko wapi
+      - wapi huduma centre [Mombasa](county)
+      - huduma centre [Kiambu](county)
+      - tafuta huduma centre
+      - ofisi ya huduma iko wapi
+      - mahali pa huduma centre
+  - intent: kra_info
+    examples: |
+      - jinsi ya kupata kra pin
+      - usajili wa kra pin
+      - nataka kurejesha mapato ya ushuru
+      - jinsi ya kulipa kodi ya kra
+      - hatua za usajili wa kra pin
+      - kupata pin yangu ya kra
+      - kurejesha mapato ya mwaka
+  - intent: shif_info
+    examples: |
+      - jinsi ya kujiunga na shif
+      - usajili wa shif
+      - jinsi ya kulipa michango ya shif
+      - taarifa za faida za shif
+      - usajili wa mamlaka ya afya ya kijamii
+      - hatua za usajili wa sha
+  - intent: choose_language
+    examples: |
+      - Kiswahili
+      - kiswahili
+      - 1
+      - moja
+      - weka lugha ya kiswahili
+      - tumia kiswahili
+  - intent: huduma_info
+    examples: |
+      - jinsi ya kuomba kitambulisho cha taifa
+      - kubadilisha id iliyopotea
+      - omba pasipoti
+      - jinsi ya kupata cheti cha kuzaliwa
+      - maombi ya cheti cha ndoa
+      - mwongozo wa huduma za e-citizen
+  - intent: ntsa_info
+    examples: |
+      - omba leseni ya udereva
+      - kurefusha leseni ya udereva
+      - jinsi ya kupata smart dl
+      - ukaguzi wa gari
+      - hatua za usajili wa gari
+  - intent: police_clearance_info
+    examples: |
+      - omba police clearance
+      - jinsi ya kupata cheti cha tabia njema
+      - maombi ya dci clearance
+      - fingerprints za cheti cha tabia njema
+  - intent: business_reg_info
+    examples: |
+      - jinsi ya kusajili kampuni
+      - hatua za usajili wa biashara
+      - sajili biashara mpya
+      - usajili wa biashara
+  - intent: helb_info
+    examples: |
+      - omba mkopo wa helb
+      - maombi ya mkopo wa wanafunzi
+      - cheti cha kufuata helb
+      - taarifa za bodi ya mikopo ya elimu ya juu
+  - intent: ecitizen_general
+    examples: |
+      - jinsi ya kutumia ecitizen
+      - fungua akaunti ya ecitizen
+      - badilisha neno la siri la ecitizen
+      - orodhesha huduma zote za serikali
+  - intent: talk_to_human
+    examples: |
+      - nataka kuongea na mhudumu
+      - nisaidie na binadamu
+      - mhudumu tafadhali
+      - ongea na mtu
+      - nataka usaidizi wa haraka
+      - msaidizi wa kibinadamu
+      - ongea na mteja
+      - huduma kwa wateja
+      - nataka kuongea na mtu halisi
+      - naweza kuongea na mhudumu?
+      - msaada wa binadamu
+  - intent: help
+    examples: |
+      - msaada
+      - nisaidie
+      - unaweza kufanya nini
+      - nionyeshe amri
+      - jinsi ya kutumia bot hii
+      - menyu
+      - mwongozo
+      - nionyeshe jinsi ya kutumia
+      - msaada tafadhali
+      - nisaidie kuelewa
+      - maelekezo

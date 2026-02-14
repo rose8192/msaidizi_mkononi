@@ -1,0 +1,95 @@
+version: "3.1"
+
+rules:
+  # ── Language selection ──
+  - rule: Choose English language
+    steps:
+      - intent: choose_language_en
+      - action: action_set_language_english
+      - action: action_utter_greet
+      - action: action_utter_menu
+
+  - rule: Choose Swahili language
+    steps:
+      - intent: choose_language_sw
+      - action: action_set_language_swahili
+      - action: action_utter_greet
+      - action: action_utter_menu
+
+  # ── Basic greeting & menu ──
+  - rule: Greet user and show menu
+    steps:
+      - intent: greet
+      - action: action_utter_greet
+      - action: action_utter_menu
+
+  - rule: Show menu when requested
+    steps:
+      - intent: menu
+      - action: action_utter_menu
+
+  # ── Menu selections ──
+  - rule: Select Hospital from menu (1)
+    steps:
+      - intent: menu_selection_hospital
+      - action: action_hospital_start
+
+  - rule: Select KRA from menu (2)
+    steps:
+      - intent: menu_selection_kra
+      - action: action_kra_info
+
+  - rule: Select SHIF from menu (3)
+    steps:
+      - intent: menu_selection_shif
+      - action: action_shif_info
+
+  - rule: Select Huduma from menu (4)
+    steps:
+      - intent: menu_selection_huduma
+      - action: action_huduma_menu
+
+  # ── Direct service requests ──
+  - rule: Direct hospital search
+    steps:
+      - intent: hospital_search
+      - action: action_hospital_start
+
+  - rule: Direct KRA request
+    steps:
+      - intent: kra_pin
+      - action: action_kra_info
+
+  - rule: Direct SHIF request
+    steps:
+      - intent: shif_info
+      - action: action_shif_info
+
+  - rule: Direct Huduma menu request
+    steps:
+      - intent: huduma_menu
+      - action: action_huduma_menu
+
+  # ── Huduma service specific ──
+  - rule: Huduma service info request
+    steps:
+      - intent: huduma_service_info
+      - action: action_huduma_service_info
+
+  - rule: Huduma centres search request
+    steps:
+      - intent: huduma_centres_search
+      - action: action_huduma_centres_start
+
+  # ── County and level collection (HANDLED IN ACTIONS) ──
+  
+  # ── Goodbye & Fallback ──
+  - rule: Say goodbye
+    steps:
+      - intent: goodbye
+      - action: action_utter_goodbye
+
+  - rule: Handle fallback
+    steps:
+      - intent: nlu_fallback
+      - action: action_utter_default

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: msaidizi-backend
+    runtime: docker
+    plan: free
+    region: ohio
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        sync: false
+        value: "5000"
+      - key: PYTHON_VERSION
+        sync: false
+        value: "3.10.0"

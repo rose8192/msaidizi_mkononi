@@ -1,0 +1,56 @@
+# .gitignore for Msaidizi Mkononi Project
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+
+# Rasa artifacts
+.rasa/
+models/
+graph.html
+
+# Flutter artifacts
+frontend/flutter_app/.dart_tool/
+frontend/flutter_app/build/
+frontend/flutter_app/android/app/build/
+frontend/flutter_app/android/.gradle/
+frontend/flutter_app/ios/Flutter/Generated.xcconfig
+frontend/flutter_app/ios/Flutter/flutter_export_environment.sh
+frontend/flutter_app/.flutter-plugins
+frontend/flutter_app/.flutter-plugins-dependencies
+frontend/flutter_app/.packages
+frontend/flutter_app/pubspec.lock
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.txt
+build_log_*.txt
+init_log.txt
+
+# Databases (we will create them on the server or use migrations)
+*.db
+*.sqlite
+
+# Binaries/Executables
+*.exe
+*.bat
+*.ps1
+*.cmd
+ffmpeg
+ffplay
+ffprobe

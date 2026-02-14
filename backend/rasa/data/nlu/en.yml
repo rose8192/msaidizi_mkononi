@@ -1,0 +1,188 @@
+version: "3.1"
+nlu:
+  - intent: greet
+    examples: |
+      - hi
+      - hello
+      - hey
+      - good morning
+      - good evening
+  - intent: goodbye
+    examples: |
+      - bye
+      - goodbye
+      - see you
+  - intent: chitchat
+    examples: |
+      - how are you
+      - who are you
+      - what can you do
+      - good
+      - nice
+      - ok
+      - okay
+      - cool
+  - intent: deny_service
+    examples: |
+      - no i don't want that
+      - i do not need this service
+      - cancel this
+      - stop
+      - I don't want kra pin
+      - I do not need kra
+      - no kra
+      - not applying for kra
+      - sitaki kra pin
+      - sihitaji kra
+      - sitaki huduma
+      - i don't want police clearance
+      - no helb
+      - don't show me this
+      - i am not interested
+      - sitaki
+      - sihitaji
+  - intent: affirm
+    examples: |
+      - yes
+      - yup
+      - indeed
+      - of course
+      - that's right
+      - correct
+      - yes please
+      - ndiyo
+  - intent: deny
+    examples: |
+      - no
+      - nope
+      - never
+      - I don't think so
+      - no way
+      - not really
+      - hapana
+  - intent: hospital_search
+    examples: |
+      - show hospitals in [Nairobi](county)
+      - list level [4](level) hospitals in [Mombasa](county)
+      - hospitals in [Kiambu](county) level [5](level)
+      - find hospitals in [Kisumu](county)
+      - where can I find a hospital
+      - hospitals near me
+      - I need to find a medical centre
+      - looking for a clinic in [Nakuru](county)
+  - intent: huduma_locator
+    examples: |
+      - huduma centre in [Nairobi](county)
+      - where is huduma centre in [Mombasa](county)
+      - huduma location in [Kiambu](county)
+      - find huduma centre
+      - where is huduma office
+      - find the nearest huduma center
+      - location of huduma
+  - intent: kra_info
+    examples: |
+      - how to get a kra pin
+      - register for kra pin
+      - i want to file tax returns
+      - how to pay kra tax
+      - kra pin registration steps
+      - get my kra pin
+      - annual tax return filing procedure
+      - tax compliance certificate application
+  - intent: shif_info
+    examples: |
+      - how to join shif
+      - register for shif
+      - how to pay shif contributions
+      - shif benefits information
+      - register for social health authority
+      - sha registration steps
+      - social health insurance fund registration
+  - intent: choose_language
+    examples: |
+      - English
+      - english
+      - 2
+      - two
+      - set language to english
+      - use english
+  - intent: huduma_info
+    examples: |
+      - how to apply for national id
+      - replacement id procedure
+      - passport application
+      - how to get a passport
+      - apply for birth certificate
+      - death certificate procedure
+      - marriage certificate registration
+      - huduma centre services
+      - tell me about huduma
+      - i need a passport
+      - how do i apply for a passport in kenya
+      - national identification card application
+      - apply for passport
+      - how to get a birth certificate
+      - marriage certificate application
+      - e-citizen services guide
+      - government services info
+  - intent: ntsa_info
+    examples: |
+      - apply for driving license
+      - dl renewal procedure
+      - how to get a smart dl
+      - vehicle inspection booking
+      - motor vehicle registration steps
+      - ntsa logbook application
+  - intent: police_clearance_info
+    examples: |
+      - apply for police clearance
+      - how to get certificate of good conduct
+      - dci clearance application
+      - fingerprints for good conduct procedure
+  - intent: business_reg_info
+    examples: |
+      - how to register a company
+      - business registration steps
+      - register a new business
+      - company registration procedure
+  - intent: helb_info
+    examples: |
+      - apply for helb loan
+      - student loan application
+      - helb compliance certificate application
+      - higher education loans board info
+  - intent: ecitizen_general
+    examples: |
+      - how to use ecitizen
+      - create ecitizen account
+      - reset ecitizen password
+      - list all government services
+      - official government portal guide
+  - intent: talk_to_human
+    examples: |
+      - talk to human
+      - contact support
+      - i want to speak to an agent
+      - connect me to a person
+      - human assistant
+      - help from a person
+      - chat with support
+      - customer care
+      - speak with a representative
+      - real person please
+      - call an agent
+      - live support
+  - intent: help
+    examples: |
+      - help
+      - what can you do
+      - assist me
+      - i need help
+      - show commands
+      - how do i use this bot
+      - menu
+      - guide
+      - what are your features
+      - how can you assist
+      - instructions
+      - show me the menu

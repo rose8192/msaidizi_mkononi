@@ -1,0 +1,175 @@
+version: "3.1"
+intents:
+  - greet
+  - goodbye
+  - chitchat
+  - deny_service
+  - affirm
+  - deny
+  - ntsa_info
+  - police_clearance_info
+  - business_reg_info
+  - helb_info
+  - ecitizen_general
+  - ussd_request
+  - web_request
+  - choose_language
+  - select_service
+  - hospital_search
+  - kra_info
+  - shif_info
+  - huduma_info
+  - huduma_locator
+  - inform
+  - restart
+  - out_of_scope
+  - talk_to_human
+  - help
+entities:
+  - county
+  - level
+slots:
+  language:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_intent
+        intent: choose_language
+        value: en
+      - type: custom
+  county:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: county
+      - type: from_text
+        conditions:
+          - active_loop: hospital_form
+            requested_slot: county
+          - active_loop: huduma_locator_form
+            requested_slot: county
+  level:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: level
+      - type: from_text
+        conditions:
+          - active_loop: hospital_form
+            requested_slot: level
+  kra_service:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+  shif_service:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+  huduma_service:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+  current_service:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+  is_ussd:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: from_intent
+        value: true
+        intent: ussd_request
+      - type: from_intent
+        value: false
+        intent: web_request
+responses:
+  utter_greet:
+    - text: "Habari! Mimi ni Msaidizi Mkononi. 🇰🇪\n\nNinaweza kukusaidia na:\n• KRA PIN na Ushuru\n• SHIF (Bima ya Afya)\n• Pasipoti na Vitambulisho\n• Huduma za NTSA (Leseni)\n• HELB na Biashara\n\nUngependa nisaidie na nini leo? (Andika 'help' kupata maelezo zaidi)"
+    - text: "Hello! I am Msaidizi Mkononi. 🇰🇪\n\nI can guide you with:\n• KRA PIN & Taxes\n• SHIF (Health Insurance)\n• Passports & IDs\n• NTSA Services (License)\n• HELB & Business Reg\n\nHow can I help you today? (Type 'help' for more options)"
+  utter_help:
+    - text: "You can ask me things like:\n• 'How do I apply for a passport?'\n• 'Where is the nearest Huduma Centre in Nairobi?'\n• 'How do I file my KRA returns?'\n• 'Search for level 4 hospitals in Kiambu'\n\nCommands:\n/restart - Start over\n/help - Show this menu\nTalk to human - Contact support"
+    - text: "Unaweza kuniuliza mambo kama:\n• 'Ninaombaje pasipoti?'\n• 'Huduma Centre iliyo karibu Nairobi iko wapi?'\n• 'Ninalipaje ushuru wa KRA?'\n• 'Tafuta hospitali za level 4 Kiambu'\n\nAmri:\n/restart - Anza upya\n/help - Onyesha menyu hii\nTalk to human - Wasiliana na mhudumu"
+  utter_talk_to_human:
+    - text: "I am transferring you to a human agent. Please wait a moment...\n(Note: In this demo, please call our toll-free line at 0800-XXX-XXX or visit the nearest Huduma Centre for urgent human assistance.)"
+    - text: "Nakuunganisha na mhudumu. Tafadhali subiri kidogo...\n(Kumbuka: Kwa sasa, tafadhali piga simu yetu ya bure 0800-XXX-XXX au tembelea Huduma Centre iliyo karibu kwa usaidizi wa haraka.)"
+  utter_ecitizen_disclaimer:
+    - text: "⚠️ **Disclaimer**: I am an informational chatbot only. I do not perform applications, payments, or status checks. All official applications must be done via the relevant government portal or at a Huduma Centre."
+    - text: "⚠️ **Onyo**: Mimi ni chatbot ya kutoa taarifa pekee. Sifanyi maombi, malipo, au ukaguzi wa hali. Maombi yote rasmi lazima yafanywe kupitia tovuti husika ya serikali au katika Huduma Centre."
+  utter_ask_clarification:
+    - text: "I'm not quite sure which service you are referring to. Could you please specify? (e.g., Passport application, KRA PIN, or NTSA Driving License)"
+    - text: "Sina hakika ni huduma gani unayomaanisha. Tafadhali fafanua? (mfano: Maombi ya Pasipoti, KRA PIN, au Leseni ya Udereva ya NTSA)"
+  utter_deny_service:
+    - text: "It seems you do not need that service. What would you like help with instead?"
+    - text: "Inaonekana hauhitaji huduma hiyo. Ungependa nisaidie na nini kingine badala yake?"
+  utter_chitchat:
+    - text: "I am Msaidizi Mkononi, your virtual assistant for Kenyan government services. I can help you with KRA, SHIF, NTSA, and more!"
+    - text: "Mimi ni Msaidizi Mkononi, msaidizi wako wa kidijitali kwa huduma za serikali ya Kenya. Ninaweza kukusaidia na KRA, SHIF, NTSA, na mengine mengi!"
+  utter_goodbye:
+    - text: "Goodbye."
+    - text: "Kwaheri."
+  utter_ask_county:
+    - text: "Please type the county name (e.g., Nyeri, Nairobi, Kisumu):"
+    - text: "Tafadhali andika jina la kaunti (mfano: Nyeri, Nairobi, Kisumu):"
+  utter_ask_level:
+    - text: "Please type the hospital level (e.g., Level 5 or 5):"
+    - text: "Tafadhali andika level ya hospitali (mfano: Level 5 au 5):"
+  utter_kra_info:
+    - text: "For KRA services visit itax.kra.go.ke or ask a specific question."
+    - text: "Kwa huduma za KRA tembelea itax.kra.go.ke au uliza swali maalum."
+  utter_shif_info:
+    - text: "For SHIF information visit shif.go.ke or ask a specific question."
+    - text: "Kwa taarifa za SHIF tembelea shif.go.ke au uliza swali maalum."
+  utter_ask_kra_service:
+    - text: "Specify KRA service: PIN, returns, iTax link."
+    - text: "Taja huduma ya KRA: PIN, returns, iTax link."
+  utter_ask_shif_service:
+    - text: "Specify SHIF service: registration, status, contributions."
+    - text: "Taja huduma ya SHIF: usajili, status, michango."
+  utter_ask_huduma_county:
+    - text: "Please type the county name to locate a Huduma Centre (e.g., Nairobi):"
+    - text: "Tafadhali andika jina la kaunti unayotafuta Huduma Centre (mfano: Nairobi):"
+  utter_ask_service_confirmation:
+    - text: "I noticed you mentioned a service keyword. Did you want to learn about {current_service}? (Yes/No)"
+    - text: "Nimeona umetaja huduma fulani. Je, ungetaka kujua kuhusu {current_service}? (Ndiyo/Hapana)"
+  utter_shif_followup:
+    - text: "Chagua moja:\n1. Kujiunga na SHIF\n2. Michango\n3. Faida\n4. Hospitali zinazokubali"
+    - text: "Choose one:\n1. SHIF Registration\n2. Contributions\n3. Benefits\n4. Participating Hospitals"
+actions:
+  - action_hospital_search
+  - action_huduma_locator
+  - action_kra_flow
+  - action_shif_flow
+  - action_huduma_flow
+  - action_kra_info
+  - action_shif_info
+  - action_huduma_menu
+  - action_language_menu
+  - action_set_language
+  - action_service_menu
+  - action_ntsa_flow
+  - action_police_clearance_flow
+  - action_business_reg_flow
+  - action_helb_flow
+  - action_ecitizen_general
+  - action_provide_disclaimer
+  - action_force_language_persistence
+  - action_default_fallback
+  - action_confirm_service
+  - action_process_service_confirmation
+
+forms:
+  hospital_form:
+    required_slots:
+      - county
+      - level
+  huduma_locator_form:
+    required_slots:
+      - county

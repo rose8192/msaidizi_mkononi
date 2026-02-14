@@ -1,0 +1,21 @@
+version: "3.1"
+stories:
+  - story: language selection flow
+    steps:
+      - intent: greet
+      - action: action_language_menu
+      - intent: choose_language
+      - action: action_set_language
+      - action: action_service_menu
+
+  - story: service confirmation flow - yes
+    steps:
+      - action: action_confirm_service
+      - intent: affirm
+      - action: action_process_service_confirmation
+
+  - story: service confirmation flow - no
+    steps:
+      - action: action_confirm_service
+      - intent: deny
+      - action: action_process_service_confirmation

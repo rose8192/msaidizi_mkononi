@@ -1,0 +1,79 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - hospital_search
+  - kra_pin
+  - shif_info
+  - huduma_menu
+  - huduma_service_info
+  - huduma_centres_search
+  - menu
+  - nlu_fallback
+  - choose_language_sw
+  - choose_language_en
+  - menu_selection_hospital
+  - menu_selection_kra
+  - menu_selection_shif
+  - menu_selection_huduma
+
+slots:
+  county:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  level:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  collecting_for:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  language:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+        initial_value: "sw"
+
+current_service:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+current_topic:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom        
+
+actions:
+  - action_hospital_start
+  - action_hospital_search
+  - action_huduma_centres_start
+  - action_handle_county
+  - action_handle_level
+  - action_kra_info
+  - action_shif_info
+  - action_huduma_menu
+  - action_huduma_service_info
+  - action_list_huduma_centres
+  - action_set_language_english
+  - action_set_language_swahili
+  - action_utter_greet
+  - action_utter_menu
+  - action_utter_goodbye
+  - action_utter_default
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
