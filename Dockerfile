@@ -29,7 +29,7 @@ cd /app/backend/rasa\n\
 # Start Rasa Actions\n\
 python -m rasa run actions --port 5055 &\n\
 # Start Rasa Server\n\
-python -m rasa run --enable-api --cors "*" --port 5005 --model models/20260212-175720-piercing-model.tar.gz &\n\
+python -m rasa run --enable-api --cors "*" --port 5005 --model models &\n\
 # Wait for Rasa to warm up (Free tier is slow)\n\
 sleep 15\n\
 # Start Flask via Gunicorn\n\
