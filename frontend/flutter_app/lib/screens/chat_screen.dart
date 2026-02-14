@@ -404,18 +404,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: _isListening 
-                          ? (provider.language == 'sw' ? 'Nasikiliza...' : 'Listening...')
-                          : (provider.language == 'sw' ? 'Andika ujumbe...' : 'Type a message...'),
+                        hintText: (provider.language == 'sw' ? 'Andika ujumbe...' : 'Type a message...'),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        suffixIcon: IconButton(
-                          onPressed: _listen,
-                          icon: Icon(
-                            _isListening ? Icons.mic : Icons.mic_none,
-                            color: _isListening ? Colors.red : kPrimaryGreen,
-                          ),
-                        ),
                       ),
                       onSubmitted: (val) => _handleSubmitted(val, provider),
                     ),

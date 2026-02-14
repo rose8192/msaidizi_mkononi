@@ -8,7 +8,13 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Proxy route for Flutter app to talk to Rasa
+# Health check route
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({"status": "Msaidizi Mkononi backend is running"}), 200
+
+# Chatbot endpoint
+@app.route('/chat', methods=['POST'])
 @app.route('/webhooks/rest/webhook', methods=['POST'])
 def rasa_proxy():
     try:
@@ -73,10 +79,6 @@ def get_analytics():
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route('/', methods=['GET'])
-def health_check():
-    return "Msaidizi Mkononi Backend is Running", 200
 
 # Africa's Talking Credentials
 username = "sandbox"
