@@ -13,8 +13,12 @@ subprojects {
                 if (android.namespace == null) {
                     android.namespace = "com.msaidizi_mkononi.${project.name.replace("-", "_")}"
                 }
-                // Ensure all plugins use the same compileSdk as the main app
                 android.compileSdkVersion(36)
+                
+                // Force targetSdk for all subprojects to match compileSdk
+                android.defaultConfig {
+                    targetSdk = 36
+                }
             }
         }
     }

@@ -4,9 +4,7 @@ workflow_extensions:
     script: |
       cd frontend/flutter_app
       flutter pub get
-      flutter clean
-      flutter build apk --release --no-tree-shake-icons -v
-      find build/app/outputs/flutter-apk -name "*.apk"
+      flutter build apk --release --no-tree-shake-icons
 
 workflows:
   android-release:
