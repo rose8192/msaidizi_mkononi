@@ -4,7 +4,7 @@ workflow_extensions:
     script: |
       cd frontend/flutter_app
       flutter pub get
-      flutter build apk --release --no-tree-shake-icons --target-platform android-arm64
+      flutter build apk --release --no-tree-shake-icons
 
 workflows:
   android-release:
