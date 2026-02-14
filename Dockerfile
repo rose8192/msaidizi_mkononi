@@ -27,8 +27,16 @@ cd /app/backend/rasa\n\
 python -m rasa run actions --port 5055 &\n\
 # Start Rasa Server with memory optimization\n\
 python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 &\n\
-# Wait for Rasa to warm up (Free tier is slow)\n\
-sleep 20\n\
+# Wait for Rasa to be ready (Max 120 seconds)\n\
+echo "Waiting for Rasa to start..." \n\
+for i in {1..24}; do\n\
+  if curl -s http://127.0.0.1:5005/ > /dev/null; then\n\
+    echo "Rasa is ready!" \n\
+    break\n\
+  fi\n\
+  echo "Still waiting for Rasa... ($((i*5))s)" \n\
+  sleep 5\n\
+done\n\
 # Start Flask via Gunicorn\n\
 cd /app\n\
 gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 app:app\n\

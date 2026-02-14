@@ -22,7 +22,7 @@ def rasa_proxy():
             return jsonify([{"text": guard_response}])
 
         # Forward to Rasa
-        r = requests.post(RASA_URL, json=payload, timeout=10)
+        r = requests.post(RASA_URL, json=payload, timeout=30)
         responses = r.json()
         
         # Log to Analytics Database
@@ -84,8 +84,8 @@ api_key = "atsk_dded8ac724083e406d34a52e1a4cd8020c8865b3840547111c690faf845c0f77
 africastalking.initialize(username, api_key)
 
 SHORTCODE = "1184"
-RASA_URL = "http://localhost:5005/webhooks/rest/webhook"
-RASA_PARSE_URL = "http://localhost:5005/model/parse"
+RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
+RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
 
 # Configuration for Smart Intent Guard
 SERVICE_INTENTS = [

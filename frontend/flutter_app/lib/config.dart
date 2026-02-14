@@ -1,7 +1,7 @@
 class AppConfig {
-  // Use 10.0.2.2 for Android Emulator, localhost for iOS/Web/Windows
-  static const backendBaseUrl = "http://10.0.2.2:8000";
+  // Render Cloud Backend URL
+  static const backendBaseUrl = "https://msaidizi-mkononi.onrender.com";
   static const telegramBotUsername = "MsaidiziMkononiBot";
   static const ussdSandboxUrl = "https://account.africastalking.com/apps/sandbox";
-  static const adminBaseUrl = "http://10.0.2.2:5001";
+  static const adminBaseUrl = "https://msaidizi-mkononi.onrender.com";
 }

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config.dart';
 
 class RasaService {
-  // CHANGE THIS to your Computer's IP Address (run 'ipconfig' to find it)
-  // Example: 'http://192.168.1.50:5005/webhooks/rest/webhook'
-  static const String baseUrl = 'http://10.5.50.79:5005/webhooks/rest/webhook';
+  // Use the central config for the backend URL
+  static const String baseUrl = '${AppConfig.backendBaseUrl}/webhooks/rest/webhook';
 
   Future<List<String>> sendMessage(String message, String senderId, String language) async {
     try {
@@ -16,7 +16,7 @@ class RasaService {
           'message': message,
           'metadata': {'language': language}
         }),
-      );
+      ).timeout(const Duration(seconds: 40));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);

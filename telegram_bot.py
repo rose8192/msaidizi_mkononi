@@ -15,7 +15,7 @@ which = lambda _: r"C:\Users\user\Desktop\msaidizi_mkononi\ffmpeg.exe"
 
 # ------------------ CONFIG ------------------
 TELEGRAM_TOKEN = "8449082083:AAEa-SQ7YvyAtFqVe9KzdNTALbhdFrwHxs0"
-RASA_URL = "http://localhost:5005/webhooks/rest/webhook"
+RASA_URL = "https://msaidizi-mkononi.onrender.com/webhooks/rest/webhook"
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TELEGRAM_TOKEN)
