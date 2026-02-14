@@ -240,11 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
       drawer: _buildDrawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _listen,
-        backgroundColor: _isListening ? Colors.red : kPrimaryGreen,
-        child: Icon(_isListening ? Icons.mic : Icons.mic_none, color: Colors.white),
-      ),
+      floatingActionButton: null,
       body: Column(
         children: [
           Expanded(
@@ -413,6 +409,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           : (provider.language == 'sw' ? 'Andika ujumbe...' : 'Type a message...'),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        suffixIcon: IconButton(
+                          onPressed: _listen,
+                          icon: Icon(
+                            _isListening ? Icons.mic : Icons.mic_none,
+                            color: _isListening ? Colors.red : kPrimaryGreen,
+                          ),
+                        ),
                       ),
                       onSubmitted: (val) => _handleSubmitted(val, provider),
                     ),
