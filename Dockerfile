@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
+# Deployment Timestamp: 2026-02-15 10:00:00
 RUN printf '#!/bin/bash\n\
 export RENDER_PORT=$PORT\n\
 cd /app/backend/rasa\n\
