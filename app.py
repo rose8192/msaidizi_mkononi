@@ -8,6 +8,7 @@ import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+print("[INIT] Starting Flask App...")
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
 
@@ -136,9 +137,13 @@ def get_analytics():
         return jsonify({"error": str(e)}), 500
 
 # Africa's Talking Credentials
-username = "sandbox"
-api_key = "atsk_dded8ac724083e406d34a52e1a4cd8020c8865b3840547111c690faf845c0f77a1ed799f"
-africastalking.initialize(username, api_key)
+try:
+    username = "sandbox"
+    api_key = "atsk_dded8ac724083e406d34a52e1a4cd8020c8865b3840547111c690faf845c0f77a1ed799f"
+    africastalking.initialize(username, api_key)
+    print("[INIT] Africa's Talking initialized successfully")
+except Exception as e:
+    print(f"[INIT ERROR] Africa's Talking failed to initialize: {e}")
 
 SHORTCODE = "1184"
 # Rasa Configuration (Local communication within Docker)
