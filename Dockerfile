@@ -22,53 +22,44 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 10:25:00
+# Deployment Timestamp: 2026-02-15 10:35:00
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
+
+# Expose Render port
 export RENDER_PORT=$PORT
+
+# Go to Rasa folder
 cd /app/backend/rasa
-# Force Rasa and Action Server to stay off the public port
+
+# Prevent Rasa from binding to public port
 unset PORT
-echo "Current Memory Info:"
-free -m || cat /proc/meminfo | grep MemAvailable
-echo "Starting Rasa Action Server..."
-# Note: rasa run actions does not support --num-threads
-python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
-echo "Starting Rasa Open Source..."
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml > /app/rasa.log 2>&1 &
+
+# Start Rasa Action Server in background
+python -m rasa run actions --port 5055 &
+
+# Start Rasa Open Source with REST API in background
+# (Removed --num-threads to ensure standard bash compatibility)
+python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
+
+# Wait for Rasa model to load
 echo "Waiting for Rasa to load model..."
-for i in {1..150}; do
-   STATUS_JSON=$(curl -s http://127.0.0.1:5005/status || echo "offline")
-   curl -s http://127.0.0.1:5055/health > /dev/null
-   if echo "$STATUS_JSON" | grep -v "null" | grep "model_file" > /dev/null; then
-     echo "Rasa is ready! Model loaded."
-     break
-   fi
-   # Check if Rasa Open Source process is still alive
-   if ! pgrep -f "rasa run --enable-api" > /dev/null; then
-     echo "CRITICAL: Rasa Open Source process has died. Checking logs:"
-     tail -n 20 /app/rasa.log
-     python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml > /app/rasa.log 2>&1 &
-   fi
-   # Check if Action Server is still alive
-   if ! pgrep -f "rasa run actions" > /dev/null; then
-     echo "CRITICAL: Action Server process has died. Checking logs:"
-     tail -n 20 /app/actions.log
-     python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
-   fi
-   echo "Rasa status: $STATUS_JSON... waiting ($((i*5))s)"
-   if [ $((i % 6)) -eq 0 ]; then
-     echo "--- Resource Check ---"
-     free -m || cat /proc/meminfo | grep MemAvailable
-     echo "--- Rasa Logs (Last 5 lines) ---"
-     tail -n 5 /app/rasa.log
-   fi
-   sleep 5
+for i in {1..60}; do
+  if curl -s http://127.0.0.1:5005/status | grep "model_file" > /dev/null; then
+    echo "Rasa is ready!"
+    break
+  fi
+  echo "Rasa status: offline... waiting ($((i*5))s)"
+  sleep 5
 done
+
+# Start Telegram Bot
 cd /app
 echo "Starting Telegram Bot..."
 python telegram_bot.py &
-echo "Starting Flask on port $RENDER_PORT..."
+
+# Start Flask backend via Gunicorn on the Render port
+echo "Starting Flask/Gunicorn on port $RENDER_PORT..."
 gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 4 --timeout 120 --access-logfile - --error-logfile - app:app
 EOF
 
