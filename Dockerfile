@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 13:45:00
+# Deployment Timestamp: 2026-02-15 14:00:00
 # --- PRODUCTION BUILD STEP ---
 # Train model during image build if not present
 # This moves the heavy lifting to build time, preventing runtime OOM kills
@@ -44,32 +44,28 @@ export RENDER_PORT=$PORT
 cd /app/backend/rasa
 
 # Prevent Rasa from binding to public port
+# CRITICAL: This prevents Render from misidentifying Rasa as the primary web service
 unset PORT
 
-# --- SIMPLE RUNTIME STARTUP ---
-# No safeguards, no logic, just run.
-
+# --- FINAL CORRECT ARCHITECTURE ---
+# 1. Start Action Server
 echo "Starting Rasa Action Server..."
 rasa run actions --port 5055 > /app/actions.log 2>&1 &
 
-# Start Rasa Open Source with REST API
-# Using --model models to let Rasa pick the latest model automatically
-# This prevents 409 errors caused by specifying exact filenames
+# 2. Start Rasa Open Source
+# --model models: Loads latest model from directory (Prevents 400/409 errors)
+# --port 5005: Internal port
 echo "Starting Rasa Open Source..."
 python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
 
-# Start Telegram Bot in background
+# 3. Start Telegram Bot (Background)
 cd /app
 echo "Starting Telegram Bot..."
 python telegram_bot.py > /app/telegram.log 2>&1 &
 
-# Start Flask backend via Gunicorn on the Render port (Foreground)
-# We wait a few seconds to let background processes initialize, but we don't block
-echo "Waiting 10s for services to warm up..."
-sleep 10
-
+# 4. Start Flask/Gunicorn (Foreground)
+# This MUST bind to $RENDER_PORT to pass health checks
 echo "Starting Flask/Gunicorn on port $RENDER_PORT..."
-# Ensure we are in the app root
 cd /app
 gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 4 --timeout 120 --access-logfile - --error-logfile - app:app
 EOF
