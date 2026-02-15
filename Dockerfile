@@ -30,14 +30,15 @@ unset PORT\n\
 python -m rasa run actions --port 5055 &\n\
 python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml &\n\
 echo "Waiting for Rasa to load model (checking /status)..."\n\
- for i in {1..120}; do\n\
-   if curl -s http://127.0.0.1:5005/status | grep -v "null" | grep "model_file" > /dev/null; then\n\
-     echo "Rasa is ready!"\n\
-     break\n\
-   fi\n\
-   echo "Still waiting for Rasa model... ($((i*5))s)"\n\
-   sleep 5\n\
- done\n\
+ for i in {1..150}; do\n\
+    STATUS_JSON=$(curl -s http://127.0.0.1:5005/status || echo "offline")\n\
+    if echo "$STATUS_JSON" | grep -v "null" | grep "model_file" > /dev/null; then\n\
+      echo "Rasa is ready! Model loaded."\n\
+      break\n\
+    fi\n\
+    echo "Rasa status: $STATUS_JSON... waiting ($((i*5))s)"\n\
+    sleep 5\n\
+  done\n\
 cd /app\n\
 echo "Starting Telegram Bot..."\n\
 python telegram_bot.py &\n\

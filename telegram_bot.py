@@ -211,4 +211,6 @@ async def handle_text(message: Message):
             await message.reply("Tatizo la kiufundi. Jaribu tena." if lang == "sw" else "Technical issue. Try again.")
 
 if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     executor.start_polling(dp, skip_updates=True)
