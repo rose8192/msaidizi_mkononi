@@ -10,12 +10,10 @@ from pydub import AudioSegment
 import speech_recognition as sr
 from pydub.utils import which
 
-# Hardcode FFmpeg path (project root)
-which = lambda _: r"C:\Users\user\Desktop\msaidizi_mkononi\ffmpeg.exe"
-
 # ------------------ CONFIG ------------------
-TELEGRAM_TOKEN = "8449082083:AAEa-SQ7YvyAtFqVe9KzdNTALbhdFrwHxs0"
-RASA_URL = "https://msaidizi-mkononi.onrender.com/webhooks/rest/webhook"
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "8449082083:AAEa-SQ7YvyAtFqVe9KzdNTALbhdFrwHxs0")
+# Internal URL for reliability inside Docker
+RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TELEGRAM_TOKEN)

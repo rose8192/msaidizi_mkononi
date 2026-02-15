@@ -36,19 +36,46 @@ app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'msaidizi-mkonon
 jwt = JWTManager(app)
 
 def init_db():
-    """Initializes the analytics database."""
+    """Initializes the analytics database with all required tables."""
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
+        # 1. Interactions/Messages table
         c.execute('''CREATE TABLE IF NOT EXISTS interactions
                      (id INTEGER PRIMARY KEY AUTOINCREMENT,
                       sender TEXT,
                       message TEXT,
                       response TEXT,
+                      intent TEXT,
+                      confidence REAL,
+                      is_fallback BOOLEAN,
+                      platform TEXT DEFAULT 'app',
                       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+        
+        # 2. Users table (Anonymized)
+        c.execute('''CREATE TABLE IF NOT EXISTS users
+                     (user_id TEXT PRIMARY KEY,
+                      language TEXT,
+                      platform TEXT,
+                      county TEXT,
+                      last_seen DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+
+        # 3. Admin Users table
+        c.execute('''CREATE TABLE IF NOT EXISTS admin_users
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      username TEXT UNIQUE,
+                      password_hash TEXT,
+                      role TEXT DEFAULT 'admin')''')
+
+        # Create default admin if not exists (admin/admin123)
+        admin_pass = "admin123"
+        pass_hash = hashlib.sha256(admin_pass.encode()).hexdigest()
+        c.execute("INSERT OR IGNORE INTO admin_users (username, password_hash) VALUES (?, ?)", 
+                  ('admin', pass_hash))
+
         conn.commit()
         conn.close()
-        logger.info("Database initialized successfully")
+        logger.info("Database initialized successfully with all tables")
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
 
@@ -136,20 +163,36 @@ def rasa_proxy():
                 time.sleep(2)
 
         # 3. Analytics Logging
-        log_interaction(sender, message, responses)
+        intent_data = rasa_parse_detailed(message)
+        log_interaction(sender, message, responses, intent_data)
         return jsonify(responses)
 
     except Exception as e:
         logger.error(f"Proxy error: {e}")
         return jsonify([{"text": "Service temporarily unavailable. Please try again later."}]), 503
 
-def log_interaction(sender, message, responses):
+def rasa_parse_detailed(text):
+    try:
+        r = requests.post(RASA_PARSE_URL, json={"text": text}, timeout=5)
+        if r.status_code == 200:
+            return r.json().get("intent", {"name": None, "confidence": 0.0})
+    except:
+        pass
+    return {"name": None, "confidence": 0.0}
+
+def log_interaction(sender, message, responses, intent_data=None):
     try:
         full_resp = " | ".join([r.get('text', '') for r in responses if isinstance(r, dict)])
+        intent_name = intent_data.get("name") if intent_data else None
+        confidence = intent_data.get("confidence", 0.0) if intent_data else 0.0
+        is_fallback = intent_name == "nlu_fallback" or confidence < 0.6
+        
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("INSERT INTO interactions (sender, message, response) VALUES (?, ?, ?)",
-                  (sender, message, full_resp))
+        c.execute("""INSERT INTO interactions 
+                     (sender, message, response, intent, confidence, is_fallback) 
+                     VALUES (?, ?, ?, ?, ?, ?)""",
+                  (sender, message, full_resp, intent_name, confidence, is_fallback))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -162,9 +205,24 @@ def admin_login():
     username = data.get('username')
     password = data.get('password')
     
-    if username == 'admin' and password == 'admin123':
-        access_token = create_access_token(identity=username)
-        return jsonify({"msg": "Login successful", "access_token": access_token}), 200
+    if not username or not password:
+        return jsonify({"msg": "Missing username or password"}), 400
+
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        user = c.execute('SELECT * FROM admin_users WHERE username = ? AND password_hash = ?', 
+                         (username, password_hash)).fetchone()
+        conn.close()
+
+        if user:
+            access_token = create_access_token(identity=username)
+            return jsonify({"msg": "Login successful", "access_token": access_token}), 200
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        
     return jsonify({"msg": "Invalid credentials"}), 401
 
 @app.route('/api/stats', methods=['GET'])
@@ -173,10 +231,24 @@ def get_stats():
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM interactions")
-        total_msgs = c.fetchone()[0]
+        
+        # Total Users
         c.execute("SELECT COUNT(DISTINCT sender) FROM interactions")
         total_users = c.fetchone()[0]
+        
+        # Total Messages
+        c.execute("SELECT COUNT(*) FROM interactions")
+        total_msgs = c.fetchone()[0]
+        
+        # Fallback Rate
+        c.execute("SELECT COUNT(*) FROM interactions WHERE is_fallback = 1")
+        fallbacks = c.fetchone()[0]
+        fallback_rate = (fallbacks / total_msgs * 100) if total_msgs > 0 else 0
+
+        # Top Intents
+        c.execute("SELECT intent, COUNT(*) as count FROM interactions WHERE intent IS NOT NULL GROUP BY intent ORDER BY count DESC LIMIT 5")
+        intents = [{"intent": row[0], "count": row[1]} for row in c.fetchall()]
+
         conn.close()
         
         return jsonify({
@@ -184,10 +256,58 @@ def get_stats():
                 'total_users': total_users,
                 'total_messages': total_msgs,
                 'active_sessions': total_users,
-                'fallback_rate': 0
+                'fallback_rate': round(fallback_rate, 2)
             },
-            'intents': [], 'languages': [], 'fallback_trends': [], 'confidence_dist': [], 'ussd_stats': [], 'volume': []
+            'intents': intents,
+            'languages': [{'language': 'en', 'count': total_msgs}], # Simplified
+            'fallback_trends': [], 
+            'confidence_dist': [], 
+            'ussd_stats': [], 
+            'volume': []
         })
+    except Exception as e:
+        logger.error(f"Stats error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/geo', methods=['GET'])
+@jwt_required()
+def get_geo_stats():
+    return jsonify([])
+
+@app.route('/api/trends', methods=['GET'])
+@jwt_required()
+def get_trends():
+    return jsonify([])
+
+@app.route('/api/export/csv', methods=['GET'])
+@jwt_required()
+def export_csv():
+    import io
+    import csv
+    from flask import send_file
+    
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.execute('SELECT * FROM interactions')
+        rows = cursor.fetchall()
+        column_names = [description[0] for description in cursor.description]
+        conn.close()
+
+        si = io.StringIO()
+        cw = csv.writer(si)
+        cw.writerow(column_names)
+        cw.writerows(rows)
+        
+        output = io.BytesIO()
+        output.write(si.getvalue().encode('utf-8'))
+        output.seek(0)
+
+        return send_file(
+            output,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'msaidizi_analytics_{time.strftime("%Y%m%d")}.csv'
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -242,15 +362,16 @@ def smart_intent_guard(message):
     
     # Optional: Pre-parse with Rasa to check intent confidence
     try:
-        r = requests.post(RASA_PARSE_URL, json={"text": message}, timeout=5)
+        # We use a short timeout and ignore errors to avoid blocking the main chat
+        r = requests.post(RASA_PARSE_URL, json={"text": message}, timeout=2)
         if r.status_code == 200:
             data = r.json()
             intent = data.get("intent", {}).get("name")
             confidence = data.get("intent", {}).get("confidence", 0)
-            if intent in SERVICE_INTENTS and confidence < 0.6:
-                return False, "I'm not sure which service you need. Could you specify? (e.g., KRA, Passport)"
-    except:
-        pass # If parser is down, let the main proxy handle it
+            if intent in SERVICE_INTENTS and confidence < 0.4: # Lowered threshold
+                return True, None # Let Rasa handle it if unsure
+    except Exception as e:
+        logger.debug(f"Guard parse skipped: {e}")
         
     return True, None
 

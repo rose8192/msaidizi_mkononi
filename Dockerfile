@@ -4,6 +4,7 @@ FROM python:3.10-slim
 # Install system dependencies (Minimal)
 RUN apt-get update && apt-get install -y \
     curl \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -38,6 +39,8 @@ RUN echo '#!/bin/bash' > /app/start.sh && \
     echo '  sleep 5' >> /app/start.sh && \
     echo 'done' >> /app/start.sh && \
     echo 'cd /app' >> /app/start.sh && \
+    echo 'echo "Starting Telegram Bot..."' >> /app/start.sh && \
+    echo 'python telegram_bot.py &' >> /app/start.sh && \
     echo 'echo "Starting Flask on port $RENDER_PORT..."' >> /app/start.sh && \
     echo 'gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 2 --timeout 120 app:app' >> /app/start.sh
 
