@@ -10,11 +10,6 @@ pipeline:
 - name: DIETClassifier
   epochs: 40
   constrain_similarities: true
-  number_of_transformer_layers: 0
-  transformer_size: 32
-  use_masked_language_model: False
-  embedding_dimension: 10
-  connection_density: 0.2
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 40
@@ -30,9 +25,6 @@ policies:
   max_history: 3
   epochs: 20
   constrain_similarities: true
-  number_of_transformer_layers: 0
-  transformer_size: 32
-  connection_density: 0.2
 assistant_id: 20260208-135131-ash-upstream
 
 # Enable debug logging
