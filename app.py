@@ -161,6 +161,11 @@ def rasa_proxy():
         logger.info(f"Rasa raw response: {r.text}")
         responses = r.json()
         
+        # Handle empty responses (fallback)
+        if not responses:
+            logger.warning("Rasa returned empty response list. Triggering fallback.")
+            responses = [{"text": "I'm not sure I understood that correctly. Could you rephrase?"}]
+
         # Log to analytics
         try:
             intent_data = rasa_parse_detailed(message)

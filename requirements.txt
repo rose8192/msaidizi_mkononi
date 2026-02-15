@@ -1,13 +1,20 @@
-# Core Services
-rasa==3.6.20
-rasa-sdk==3.6.2
-flask<3.0.0
-gunicorn
+# Core Services - Pinned for Stability
+rasa==3.5.10
+rasa-sdk==3.5.1
+tensorflow==2.11.0
+SQLAlchemy==1.4.47
+setuptools==65.5.0
+wheel
+
+# Web Server
+flask==2.3.3
+gunicorn==20.1.0
+sanic==22.12.0  # Pinned for Rasa 3.5 compatibility
 
 # Connectors & Tools
 africastalking
-requests
-pandas
+requests==2.31.0
+pandas<2.0.0
 python-dotenv
 flask-cors
 flask-jwt-extended
@@ -15,13 +22,9 @@ aiofiles
 python-multipart
 structlog
 flask-limiter
-SQLAlchemy<2.0.0
 marshmallow
 tenacity
 pyyaml
 aiogram<3.0.0
 pydub
 SpeechRecognition
-
-# Fix for Rasa 3.x conflicts
-

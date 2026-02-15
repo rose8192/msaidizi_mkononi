@@ -63,8 +63,8 @@ echo "Starting Telegram Bot..."
 python telegram_bot.py &
 
 # Wait for services to initialize
-echo "Waiting 10s for Rasa to initialize..."
-sleep 10
+echo "Waiting 15s for Rasa to initialize..."
+sleep 15
 
 # 4. Start Flask/Gunicorn (Foreground)
 # This MUST bind to $RENDER_PORT to pass health checks
