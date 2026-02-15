@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 10:50:00
+# Deployment Timestamp: 2026-02-15 11:00:00
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
 
@@ -53,8 +53,10 @@ echo "Starting Rasa Action Server..."
 python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
 
 # Start Rasa Open Source with REST API in background
+# Added --debug to see why loading is stuck
+# Added --no-prompt to avoid any interactive prompts
 echo "Starting Rasa Open Source..."
-python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
+python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug --no-prompt > /app/rasa.log 2>&1 &
 
 # Wait for Rasa model to load
 echo "Waiting for Rasa to load model..."
@@ -75,12 +77,21 @@ for i in {1..120}; do
     # If the process died, restart it
     if ! pgrep -f "rasa run --enable-api" > /dev/null; then
         echo "Rasa process died, restarting..."
-        python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
+        python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug --no-prompt > /app/rasa.log 2>&1 &
     fi
   fi
   
   sleep 5
 done
+
+# Force load model via API if it's still not loaded
+if echo "$STATUS_RESPONSE" | grep "No agent loaded" > /dev/null; then
+    echo "Attempting to force-load model via API..."
+    curl -X PUT "http://127.0.0.1:5005/model" \
+      -H "Content-Type: application/json" \
+      -d "{\"model_file\": \"$MODEL_PATH\"}"
+    sleep 10
+fi
 
 # Start Telegram Bot
 cd /app
