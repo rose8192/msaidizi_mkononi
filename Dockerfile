@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 10:40:00
+# Deployment Timestamp: 2026-02-15 10:50:00
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
 
@@ -38,22 +38,22 @@ unset PORT
 echo "Checking for Rasa models..."
 ls -la models/
 
-# Find the latest model file to be explicit
-LATEST_MODEL=$(ls -t models/*.tar.gz 2>/dev/null | head -n 1)
-if [ -z "$LATEST_MODEL" ]; then
-    echo "WARNING: No model files found in backend/rasa/models/"
-    MODEL_PATH="models"
-else
-    echo "Found latest model: $LATEST_MODEL"
-    MODEL_PATH="$LATEST_MODEL"
+# Hardcoded model path to be 100% sure it loads
+MODEL_PATH="models/20260215-134732-ivory-citadel.tar.gz"
+
+if [ ! -f "$MODEL_PATH" ]; then
+    echo "CRITICAL ERROR: Model $MODEL_PATH not found! Falling back to newest model."
+    MODEL_PATH=$(ls -t models/*.tar.gz 2>/dev/null | head -n 1)
 fi
+
+echo "Using model: $MODEL_PATH"
 
 # Start Rasa Action Server in background
 echo "Starting Rasa Action Server..."
 python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
 
 # Start Rasa Open Source with REST API in background
-echo "Starting Rasa Open Source with model: $MODEL_PATH"
+echo "Starting Rasa Open Source..."
 python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
 
 # Wait for Rasa model to load
@@ -72,6 +72,11 @@ for i in {1..120}; do
   if [ $((i % 6)) -eq 0 ]; then
     echo "--- Last 5 lines of Rasa logs ---"
     tail -n 5 /app/rasa.log
+    # If the process died, restart it
+    if ! pgrep -f "rasa run --enable-api" > /dev/null; then
+        echo "Rasa process died, restarting..."
+        python -m rasa run --enable-api --cors "*" --port 5005 --model "$MODEL_PATH" --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
+    fi
   fi
   
   sleep 5
