@@ -15,6 +15,9 @@ TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "8449082083:AAEa-SQ7YvyAtFqVe9
 # Internal URL for reliability inside Docker
 RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
 
+# Ensure ffmpeg is available in the PATH (standard in Linux/Docker)
+# We don't need a hardcoded path if it's in the environment PATH
+
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)

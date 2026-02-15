@@ -42,7 +42,7 @@ RUN echo '#!/bin/bash' > /app/start.sh && \
     echo 'echo "Starting Telegram Bot..."' >> /app/start.sh && \
     echo 'python telegram_bot.py &' >> /app/start.sh && \
     echo 'echo "Starting Flask on port $RENDER_PORT..."' >> /app/start.sh && \
-    echo 'gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 2 --timeout 120 app:app' >> /app/start.sh
+    echo 'gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 4 --timeout 120 --access-logfile - --error-logfile - app:app' >> /app/start.sh
 
 RUN chmod +x /app/start.sh
 

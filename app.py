@@ -173,6 +173,19 @@ def rasa_proxy():
         logger.error(f"Proxy unexpected error: {e}")
         return jsonify([{"text": "Communication failure. Please try again later."}]), 500
 
+@app.route('/hospitals/search', methods=['GET'])
+def hospitals_search():
+    county = request.args.get('county')
+    level = request.args.get('level')
+    # Logic to be implemented or imported
+    return jsonify({"results": []})
+
+@app.route('/huduma/locate', methods=['GET'])
+def huduma_locate():
+    county = request.args.get('county')
+    # Logic to be implemented or imported
+    return jsonify({"results": []})
+
 def rasa_parse_detailed(text):
     try:
         r = requests.post(RASA_PARSE_URL, json={"text": text}, timeout=5)
