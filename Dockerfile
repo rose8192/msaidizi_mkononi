@@ -28,7 +28,7 @@ RUN echo '#!/bin/bash' > /app/start.sh && \
     echo '# Force Rasa and Action Server to stay off the public port' >> /app/start.sh && \
     echo 'unset PORT' >> /app/start.sh && \
     echo 'python -m rasa run actions --port 5055 &' >> /app/start.sh && \
-    echo 'python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 &' >> /app/start.sh && \
+    echo 'python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml &' >> /app/start.sh && \
     echo 'echo "Waiting for Rasa to load model (checking /status)..."' >> /app/start.sh && \
     echo 'for i in {1..40}; do' >> /app/start.sh && \
     echo '  if curl -s http://127.0.0.1:5005/status | grep "model_file" > /dev/null; then' >> /app/start.sh && \
