@@ -3,7 +3,7 @@ rules:
   - rule: Greet shows language menu
     steps:
       - intent: greet
-      - action: action_language_menu
+      - action: utter_greet
 
   - rule: Set language then show services
     steps:

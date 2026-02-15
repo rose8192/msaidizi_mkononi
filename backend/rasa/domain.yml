@@ -92,8 +92,7 @@ slots:
         intent: web_request
 responses:
   utter_greet:
-    - text: "Habari! Mimi ni Msaidizi Mkononi. 🇰🇪\n\nNinaweza kukusaidia na:\n• KRA PIN na Ushuru\n• SHIF (Bima ya Afya)\n• Pasipoti na Vitambulisho\n• Huduma za NTSA (Leseni)\n• HELB na Biashara\n\nUngependa nisaidie na nini leo? (Andika 'help' kupata maelezo zaidi)"
-    - text: "Hello! I am Msaidizi Mkononi. 🇰🇪\n\nI can guide you with:\n• KRA PIN & Taxes\n• SHIF (Health Insurance)\n• Passports & IDs\n• NTSA Services (License)\n• HELB & Business Reg\n\nHow can I help you today? (Type 'help' for more options)"
+    - text: "Hello! I am Msaidizi Mkononi. 🇰🇪\n\nHow can I help you today? (Type 'help' for more options)"
   utter_help:
     - text: "You can ask me things like:\n• 'How do I apply for a passport?'\n• 'Where is the nearest Huduma Centre in Nairobi?'\n• 'How do I file my KRA returns?'\n• 'Search for level 4 hospitals in Kiambu'\n\nCommands:\n/restart - Start over\n/help - Show this menu\nTalk to human - Contact support"
     - text: "Unaweza kuniuliza mambo kama:\n• 'Ninaombaje pasipoti?'\n• 'Huduma Centre iliyo karibu Nairobi iko wapi?'\n• 'Ninalipaje ushuru wa KRA?'\n• 'Tafuta hospitali za level 4 Kiambu'\n\nAmri:\n/restart - Anza upya\n/help - Onyesha menyu hii\nTalk to human - Wasiliana na mhudumu"
