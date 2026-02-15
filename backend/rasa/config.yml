@@ -26,7 +26,3 @@ policies:
   epochs: 20
   constrain_similarities: true
 assistant_id: 20260208-135131-ash-upstream
-
-# Enable debug logging
-logging:
-  level: DEBUG
