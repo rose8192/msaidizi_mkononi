@@ -27,18 +27,23 @@ export RENDER_PORT=$PORT\n\
 cd /app/backend/rasa\n\
 # Force Rasa and Action Server to stay off the public port\n\
 unset PORT\n\
-python -m rasa run actions --port 5055 &\n\
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml &\n\
+python -m rasa run actions --port 5055 --debug > /app/actions.log 2>&1 &\n\
+python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &\n\
 echo "Waiting for Rasa to load model (checking /status)..."\n\
- for i in {1..150}; do\n\
-    STATUS_JSON=$(curl -s http://127.0.0.1:5005/status || echo "offline")\n\
-    if echo "$STATUS_JSON" | grep -v "null" | grep "model_file" > /dev/null; then\n\
-      echo "Rasa is ready! Model loaded."\n\
-      break\n\
-    fi\n\
-    echo "Rasa status: $STATUS_JSON... waiting ($((i*5))s)"\n\
-    sleep 5\n\
-  done\n\
+for i in {1..150}; do\n\
+   STATUS_JSON=$(curl -s http://127.0.0.1:5005/status || echo "offline")\n\
+   if echo "$STATUS_JSON" | grep -v "null" | grep "model_file" > /dev/null; then\n\
+     echo "Rasa is ready! Model loaded."\n\
+     break\n\
+   fi\n\
+   echo "Rasa status: $STATUS_JSON... waiting ($((i*5))s)"\n\
+   # Every 30 seconds, show the last few lines of the logs to debug why it is offline\n\
+   if [ $((i % 6)) -eq 0 ]; then\n\
+     echo "--- Rasa Logs (Last 5 lines) ---"\n\
+     tail -n 5 /app/rasa.log\n\
+   fi\n\
+   sleep 5\n\
+done\n\
 cd /app\n\
 echo "Starting Telegram Bot..."\n\
 python telegram_bot.py &\n\
