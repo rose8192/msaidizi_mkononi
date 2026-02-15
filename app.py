@@ -104,6 +104,12 @@ def rasa_proxy():
     
     logger.info(f"Chat request from {sender}: {message[:50]}...")
     
+    # Corrected payload for Rasa REST endpoint
+    rasa_payload = {
+        "sender": str(sender),
+        "message": str(message)
+    }
+    
     try:
         # 1. Intent Guard
         is_valid, guard_response = smart_intent_guard(message)
@@ -114,8 +120,8 @@ def rasa_proxy():
         responses = []
         for attempt in range(3):
             try:
-                # Use RASA_INTERNAL_URL to ensure we hit the Rasa port 5005
-                r = requests.post(RASA_INTERNAL_URL, json=payload, timeout=30)
+                # Use RASA_INTERNAL_URL (http://127.0.0.1:5005/webhooks/rest/webhook)
+                r = requests.post(RASA_INTERNAL_URL, json=rasa_payload, timeout=30)
                 r.raise_for_status()
                 responses = r.json()
                 break
