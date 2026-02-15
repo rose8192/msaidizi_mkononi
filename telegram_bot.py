@@ -2,6 +2,7 @@
 import asyncio
 import logging
 import os
+import time
 import tempfile
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
@@ -211,6 +212,12 @@ async def handle_text(message: Message):
             await message.reply("Tatizo la kiufundi. Jaribu tena." if lang == "sw" else "Technical issue. Try again.")
 
 if __name__ == '__main__':
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    executor.start_polling(dp, skip_updates=True)
+    while True:
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            logging.info("Starting bot polling...")
+            executor.start_polling(dp, skip_updates=True)
+        except Exception as e:
+            logging.error(f"Bot crashed with error: {e}. Restarting in 5 seconds...")
+            time.sleep(5)
