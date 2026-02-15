@@ -93,6 +93,9 @@ slots:
 responses:
   utter_greet:
     - text: "Hello! I am Msaidizi Mkononi. 🇰🇪\n\nHow can I help you today? (Type 'help' for more options)"
+  utter_passport_info:
+    - text: "What would you like to know about passports? You can ask about applications, renewals, or requirements."
+    - text: "I can help with passport information. Please specify what you need."
   utter_help:
     - text: "You can ask me things like:\n• 'How do I apply for a passport?'\n• 'Where is the nearest Huduma Centre in Nairobi?'\n• 'How do I file my KRA returns?'\n• 'Search for level 4 hospitals in Kiambu'\n\nCommands:\n/restart - Start over\n/help - Show this menu\nTalk to human - Contact support"
     - text: "Unaweza kuniuliza mambo kama:\n• 'Ninaombaje pasipoti?'\n• 'Huduma Centre iliyo karibu Nairobi iko wapi?'\n• 'Ninalipaje ushuru wa KRA?'\n• 'Tafuta hospitali za level 4 Kiambu'\n\nAmri:\n/restart - Anza upya\n/help - Onyesha menyu hii\nTalk to human - Wasiliana na mhudumu"

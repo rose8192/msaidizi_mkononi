@@ -61,7 +61,7 @@ python telegram_bot.py > /app/telegram.log 2>&1 &
 # This MUST bind to $RENDER_PORT to pass health checks
 echo "Starting Flask/Gunicorn on port $RENDER_PORT..."
 cd /app
-gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 4 --timeout 120 --access-logfile - --error-logfile - app:app
+gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 1 --timeout 120 --access-logfile - --error-logfile - app:app
 EOF
 
 RUN chmod +x /app/start.sh

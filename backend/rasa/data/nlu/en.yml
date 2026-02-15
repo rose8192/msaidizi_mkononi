@@ -125,6 +125,12 @@ nlu:
       - marriage certificate application
       - e-citizen services guide
       - government services info
+  - intent: ask_passport_info
+    examples: |
+      - passport info
+      - tell me about passports
+      - passport information
+      - I need help with passport
   - intent: ntsa_info
     examples: |
       - apply for driving license

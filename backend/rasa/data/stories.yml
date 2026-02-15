@@ -19,3 +19,8 @@ stories:
       - action: action_confirm_service
       - intent: deny
       - action: action_process_service_confirmation
+
+  - story: passport inquiry
+    steps:
+      - intent: ask_passport_info
+      - action: utter_passport_info

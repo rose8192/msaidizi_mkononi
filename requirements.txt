@@ -24,6 +24,4 @@ pydub
 SpeechRecognition
 
 # Fix for Rasa 3.x conflicts
-pydantic<2.0.0
-fastapi<0.100.0
-typing-extensions<5.0.0
+
