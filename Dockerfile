@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 10:20:00
+# Deployment Timestamp: 2026-02-15 10:25:00
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
 export RENDER_PORT=$PORT
@@ -32,6 +32,7 @@ unset PORT
 echo "Current Memory Info:"
 free -m || cat /proc/meminfo | grep MemAvailable
 echo "Starting Rasa Action Server..."
+# Note: rasa run actions does not support --num-threads
 python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
 echo "Starting Rasa Open Source..."
 python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml > /app/rasa.log 2>&1 &
@@ -43,10 +44,17 @@ for i in {1..150}; do
      echo "Rasa is ready! Model loaded."
      break
    fi
-   if ! pgrep -f "rasa run" > /dev/null; then
-     echo "CRITICAL: Rasa process has died. Checking logs:"
+   # Check if Rasa Open Source process is still alive
+   if ! pgrep -f "rasa run --enable-api" > /dev/null; then
+     echo "CRITICAL: Rasa Open Source process has died. Checking logs:"
      tail -n 20 /app/rasa.log
      python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml > /app/rasa.log 2>&1 &
+   fi
+   # Check if Action Server is still alive
+   if ! pgrep -f "rasa run actions" > /dev/null; then
+     echo "CRITICAL: Action Server process has died. Checking logs:"
+     tail -n 20 /app/actions.log
+     python -m rasa run actions --port 5055 > /app/actions.log 2>&1 &
    fi
    echo "Rasa status: $STATUS_JSON... waiting ($((i*5))s)"
    if [ $((i % 6)) -eq 0 ]; then
