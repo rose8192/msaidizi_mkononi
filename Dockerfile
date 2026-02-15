@@ -26,13 +26,7 @@ COPY . .
 # --- PRODUCTION BUILD STEP ---
 # Train model during image build if not present
 # This moves the heavy lifting to build time, preventing runtime OOM kills
-RUN cd /app/backend/rasa && \
-    if [ -z "$(ls -A models 2>/dev/null)" ]; then \
-        echo "No models found. Training during build..." && \
-        rasa train; \
-    else \
-        echo "Model found. Skipping build-time training."; \
-    fi
+RUN cd /app/backend/rasa && rasa train --force
 
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
