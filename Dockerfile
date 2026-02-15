@@ -20,27 +20,22 @@ RUN pip install --no-cache-dir gunicorn
 # Copy project files
 COPY . .
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-cd /app/backend/rasa\n\
-# Start Rasa Actions\n\
-python -m rasa run actions --port 5055 &\n\
-# Start Rasa Server with extreme memory optimization
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --debug &
-# Wait for Rasa to be ready (Max 120 seconds)
-echo "Waiting for Rasa to start..." 
-for i in {1..24}; do
-  if curl -s http://127.0.0.1:5005/ > /dev/null; then
-    echo "Rasa is ready!" 
-    break
-  fi
-  echo "Still waiting for Rasa... ($((i*5))s)" 
-  sleep 5
-done
-# Start Flask via Gunicorn (Minimal workers to save RAM)
-cd /app
-gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 1 --timeout 120 app:app
-' > /app/start.sh
+# Create startup script correctly using a single RUN command
+RUN echo '#!/bin/bash' > /app/start.sh && \
+    echo 'cd /app/backend/rasa' >> /app/start.sh && \
+    echo 'python -m rasa run actions --port 5055 &' >> /app/start.sh && \
+    echo 'python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --debug &' >> /app/start.sh && \
+    echo 'echo "Waiting for Rasa to start..."' >> /app/start.sh && \
+    echo 'for i in {1..24}; do' >> /app/start.sh && \
+    echo '  if curl -s http://127.0.0.1:5005/ > /dev/null; then' >> /app/start.sh && \
+    echo '    echo "Rasa is ready!"' >> /app/start.sh && \
+    echo '    break' >> /app/start.sh && \
+    echo '  fi' >> /app/start.sh && \
+    echo '  echo "Still waiting for Rasa... ($((i*5))s)"' >> /app/start.sh && \
+    echo '  sleep 5' >> /app/start.sh && \
+    echo 'done' >> /app/start.sh && \
+    echo 'cd /app' >> /app/start.sh && \
+    echo 'gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 1 --timeout 120 app:app' >> /app/start.sh
 
 RUN chmod +x /app/start.sh
 

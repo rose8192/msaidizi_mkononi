@@ -31,9 +31,11 @@ android {
     }
 
     buildTypes {
-        release {
-            // Unsigned release build for CI
-            signingConfig = null
+        getByName("release") {
+            // Use debug keys for release so it can be installed without manual signing
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
