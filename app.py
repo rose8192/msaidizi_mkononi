@@ -104,30 +104,34 @@ def rasa_proxy():
     
     logger.info(f"Chat request from {sender}: {message[:50]}...")
     
-    # Corrected payload for Rasa REST endpoint
+    # PRODUCTION FIX: Explicitly format for Rasa REST API
     rasa_payload = {
         "sender": str(sender),
         "message": str(message)
     }
     
     try:
-        # 1. Intent Guard
+        # 1. Intent Guard (Optional validation)
         is_valid, guard_response = smart_intent_guard(message)
         if not is_valid:
             return jsonify([{"text": guard_response}])
 
-        # 2. Rasa Forwarding with Retry Logic
+        # 2. Rasa Forwarding (Correct Endpoint: /webhooks/rest/webhook)
+        # We use 127.0.0.1:5005 to ensure internal container communication
         responses = []
         for attempt in range(3):
             try:
-                # Use RASA_INTERNAL_URL (http://127.0.0.1:5005/webhooks/rest/webhook)
-                r = requests.post(RASA_INTERNAL_URL, json=rasa_payload, timeout=30)
+                r = requests.post(
+                    "http://127.0.0.1:5005/webhooks/rest/webhook", 
+                    json=rasa_payload, 
+                    timeout=30
+                )
                 r.raise_for_status()
                 responses = r.json()
                 break
             except Exception as e:
                 logger.warning(f"Rasa connection attempt {attempt+1} failed: {e}")
-                if attempt == 2: # Last attempt
+                if attempt == 2:
                     return jsonify([{"text": "AI engine is warming up. Please try again in a moment."}]), 503
                 time.sleep(2)
 
