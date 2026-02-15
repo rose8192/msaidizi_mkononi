@@ -38,6 +38,8 @@ python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-thre
 echo "Waiting for Rasa to load model (checking /status)..."\n\
 for i in {1..150}; do\n\
    STATUS_JSON=$(curl -s http://127.0.0.1:5005/status || echo "offline")\n\
+   # Check Action Server health separately to avoid "NotFound" errors in logs\n\
+   curl -s http://127.0.0.1:5055/health > /dev/null\n\
    if echo "$STATUS_JSON" | grep -v "null" | grep "model_file" > /dev/null; then\n\
      echo "Rasa is ready! Model loaded."\n\
      break\n\
