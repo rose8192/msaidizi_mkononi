@@ -9,7 +9,7 @@ wheel
 # Web Server
 flask==2.3.3
 gunicorn==20.1.0
-sanic==22.12.0  # Pinned for Rasa 3.5 compatibility
+# sanic is installed by rasa, do not pin it explicitly to avoid conflicts
 
 # Connectors & Tools
 africastalking
