@@ -30,8 +30,8 @@ RUN echo '#!/bin/bash' > /app/start.sh && \
     echo 'python -m rasa run actions --port 5055 &' >> /app/start.sh && \
     echo 'python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --endpoints endpoints.yml &' >> /app/start.sh && \
     echo 'echo "Waiting for Rasa to load model (checking /status)..."' >> /app/start.sh && \
-    echo 'for i in {1..40}; do' >> /app/start.sh && \
-    echo '  if curl -s http://127.0.0.1:5005/status | grep "model_file" > /dev/null; then' >> /app/start.sh && \
+    echo 'for i in {1..60}; do' >> /app/start.sh && \
+    echo '  if curl -s http://127.0.0.1:5005/status | grep -v "null" | grep "model_file" > /dev/null; then' >> /app/start.sh && \
     echo '    echo "Rasa is ready!"' >> /app/start.sh && \
     echo '    break' >> /app/start.sh && \
     echo '  fi' >> /app/start.sh && \

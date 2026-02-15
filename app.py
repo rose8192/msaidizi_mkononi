@@ -122,54 +122,56 @@ def test_rasa():
 
 @app.route('/chat', methods=['POST'])
 def rasa_proxy():
+    """
+    Proxies requests from Flutter/Frontend to Rasa.
+    Ensures correct JSON format: {"sender": "user", "message": "hello"}
+    Forwarded to Rasa internal endpoint: /webhooks/rest/webhook
+    """
     payload = request.json
     if not payload:
         return jsonify([{"text": "Error: No message received."}]), 400
         
-    sender = payload.get('sender', 'unknown')
-    message = payload.get('message', '')
+    sender = str(payload.get('sender', 'unknown'))
+    message = str(payload.get('message', ''))
     
-    logger.info(f"Chat request from {sender}: {message[:50]}...")
-    
-    # PRODUCTION FIX: Explicitly format for Rasa REST API
+    # Correct JSON format for Rasa REST API
     rasa_payload = {
-        "sender": str(sender),
-        "message": str(message)
+        "sender": sender,
+        "message": message
     }
     
+    logger.info(f"Forwarding to Rasa: {sender} -> {message[:50]}...")
+    
     try:
-        # 1. Intent Guard (Optional validation)
-        is_valid, guard_response = smart_intent_guard(message)
-        if not is_valid:
-            return jsonify([{"text": guard_response}])
+        # Internal container communication on port 5005
+        # Correct endpoint is ALWAYS /webhooks/rest/webhook for REST input
+        r = requests.post(
+            "http://127.0.0.1:5005/webhooks/rest/webhook",
+            json=rasa_payload,
+            timeout=45 # Increased timeout for slow model cold starts
+        )
+        
+        if r.status_code != 200:
+            logger.error(f"Rasa error {r.status_code}: {r.text}")
+            return jsonify([{"text": "AI service returned an error. Please try again."}]), 502
 
-        # 2. Rasa Forwarding (Correct Endpoint: /webhooks/rest/webhook)
-        # We use 127.0.0.1:5005 to ensure internal container communication
-        responses = []
-        for attempt in range(3):
-            try:
-                r = requests.post(
-                    "http://127.0.0.1:5005/webhooks/rest/webhook", 
-                    json=rasa_payload, 
-                    timeout=30
-                )
-                r.raise_for_status()
-                responses = r.json()
-                break
-            except Exception as e:
-                logger.warning(f"Rasa connection attempt {attempt+1} failed: {e}")
-                if attempt == 2:
-                    return jsonify([{"text": "AI engine is warming up. Please try again in a moment."}]), 503
-                time.sleep(2)
-
-        # 3. Analytics Logging
-        intent_data = rasa_parse_detailed(message)
-        log_interaction(sender, message, responses, intent_data)
+        responses = r.json()
+        
+        # Log to analytics
+        try:
+            intent_data = rasa_parse_detailed(message)
+            log_interaction(sender, message, responses, intent_data)
+        except Exception as log_err:
+            logger.error(f"Analytics logging failed: {log_err}")
+            
         return jsonify(responses)
 
+    except requests.exceptions.ConnectionError:
+        logger.error("Could not connect to Rasa server.")
+        return jsonify([{"text": "AI engine is starting up. Please try again in 10 seconds."}]), 503
     except Exception as e:
-        logger.error(f"Proxy error: {e}")
-        return jsonify([{"text": "Service temporarily unavailable. Please try again later."}]), 503
+        logger.error(f"Proxy unexpected error: {e}")
+        return jsonify([{"text": "Communication failure. Please try again later."}]), 500
 
 def rasa_parse_detailed(text):
     try:

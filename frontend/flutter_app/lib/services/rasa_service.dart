@@ -8,37 +8,32 @@ class RasaService {
   static String get baseUrl => '${AppConfig.backendBaseUrl}/chat';
 
   Future<List<String>> sendMessage(String message, String senderId, String language) async {
-    final url = baseUrl;
+    // Correct Endpoint: Flutter calls Flask /chat, NOT Rasa directly
+    final url = baseUrl; 
     try {
-      debugPrint('SENDING TO: $url');
+      debugPrint('SENDING TO FLASK PROXY: $url');
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'sender': senderId,
           'message': message,
-          'metadata': {'language': language}
+          // metadata is optional, but Flask proxy expects 'sender' and 'message'
         }),
       ).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+        // Rasa returns a list of messages like [{"text": "Hello"}, {"text": "How can I help?"}]
         return data.map((msg) => msg['text'] as String).toList();
       } else {
-        // Enhanced error logging as requested
         debugPrint('BACKEND ERROR: Status ${response.statusCode}');
         debugPrint('RESPONSE BODY: ${response.body}');
-        try {
-          final List<dynamic> data = jsonDecode(response.body);
-          if (data.isNotEmpty && data[0]['text'] != null) {
-            return [data[0]['text'] as String];
-          }
-        } catch (_) {}
-        return ['Error: Server returned status ${response.statusCode}. Please try again later.'];
+        return ['Sorry, I am having trouble connecting to the AI engine. (${response.statusCode})'];
       }
     } catch (e) {
       debugPrint('CONNECTION ERROR: $e');
-      return ['Error: Could not reach Msaidizi Mkononi backend. Details: $e'];
+      return ['Could not reach the server. Please check your internet connection.'];
     }
   }
 }
