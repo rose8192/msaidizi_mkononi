@@ -5,7 +5,7 @@ import time
 import pyttsx3  # For TTS (speak replies)
 
 # Configuration
-RASA_URL = "http://localhost:5005/webhooks/rest/webhook"
+RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
 SENDER_ID = "voice_user"  # Fixed sender ID for session persistence
 
 def get_swahili_voice(engine):
