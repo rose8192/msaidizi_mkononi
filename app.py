@@ -154,6 +154,7 @@ def rasa_proxy():
             logger.error(f"Rasa error {r.status_code}: {r.text}")
             return jsonify([{"text": "AI service returned an error. Please try again."}]), 502
 
+        logger.info(f"Rasa raw response: {r.text}")
         responses = r.json()
         
         # Log to analytics

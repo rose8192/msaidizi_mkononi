@@ -3,7 +3,7 @@ stories:
   - story: language selection flow
     steps:
       - intent: greet
-      - action: action_language_menu
+      - action: utter_greet
       - intent: choose_language
       - action: action_set_language
       - action: action_service_menu
