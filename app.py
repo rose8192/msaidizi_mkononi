@@ -19,6 +19,25 @@ def health_check():
         "timestamp": time.time()
     }), 200
 
+@app.route('/test-rasa', methods=['GET'])
+def test_rasa():
+    results = {}
+    # Test 1: Root
+    try:
+        r1 = requests.get(RASA_URL.replace('/webhooks/rest/webhook', '/'), timeout=5)
+        results["root"] = {"status": r1.status_code}
+    except Exception as e:
+        results["root"] = {"error": str(e)}
+        
+    # Test 2: Webhook
+    try:
+        r2 = requests.post(RASA_URL, json={"sender": "test", "message": "hi"}, timeout=5)
+        results["webhook"] = {"status": r2.status_code, "body": r2.text}
+    except Exception as e:
+        results["webhook"] = {"error": str(e)}
+        
+    return jsonify(results)
+
 # Chatbot endpoint
 @app.route('/chat', methods=['POST'])
 @app.route('/webhooks/rest/webhook', methods=['POST'])
@@ -62,7 +81,7 @@ def rasa_proxy():
 
     except Exception as e:
         print(f"[PROXY ERROR] Final failure: {e}")
-        return jsonify([{"text": "Error: Msaidizi Mkononi is waking up. Please try again in 30 seconds."}]), 503
+        return jsonify([{"text": f"Backend Error: {str(e)}"}]), 503
 
 def log_interaction(sender, message, responses):
     """Logs the interaction to the SQLite database for the analytics dashboard."""
