@@ -44,18 +44,18 @@ unset PORT
 # --- FINAL CORRECT ARCHITECTURE ---
 # 1. Start Action Server
 echo "Starting Rasa Action Server..."
-rasa run actions --port 5055 > /app/actions.log 2>&1 &
+rasa run actions --port 5055 &
 
 # 2. Start Rasa Open Source
 # --model models: Loads latest model from directory (Prevents 400/409 errors)
 # --port 5005: Internal port
 echo "Starting Rasa Open Source..."
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml --debug > /app/rasa.log 2>&1 &
+python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml --debug &
 
 # 3. Start Telegram Bot (Background)
 cd /app
 echo "Starting Telegram Bot..."
-python telegram_bot.py > /app/telegram.log 2>&1 &
+python telegram_bot.py &
 
 # 4. Start Flask/Gunicorn (Foreground)
 # This MUST bind to $RENDER_PORT to pass health checks

@@ -101,6 +101,10 @@ def health_check():
         "database": os.path.exists(DB_PATH)
     }), 200
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 @app.route('/test-rasa', methods=['GET'])
 def test_rasa():
     try:
@@ -167,7 +171,7 @@ def rasa_proxy():
         return jsonify(responses)
 
     except requests.exceptions.ConnectionError:
-        logger.error("Could not connect to Rasa server.")
+        logger.error(f"Could not connect to Rasa server at {RASA_INTERNAL_URL}")
         return jsonify([{"text": "AI engine is starting up. Please try again in 10 seconds."}]), 503
     except Exception as e:
         logger.error(f"Proxy unexpected error: {e}")
