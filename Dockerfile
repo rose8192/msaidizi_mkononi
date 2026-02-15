@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir gunicorn
 COPY . .
 
 # Create startup script correctly using a single RUN command
-# Deployment Timestamp: 2026-02-15 13:00:00
+# Deployment Timestamp: 2026-02-15 13:15:00
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
 
@@ -35,19 +35,18 @@ cd /app/backend/rasa
 # Prevent Rasa from binding to public port
 unset PORT
 
-echo "Checking for Rasa models..."
-# Explicitly find the latest model to avoid ambiguity
-LATEST_MODEL_FILE=$(ls -t models/*.tar.gz 2>/dev/null | head -n 1)
-
-if [ -f "$LATEST_MODEL_FILE" ]; then
-    echo "Model found: $LATEST_MODEL_FILE. Skipping training."
-else
-    echo "No model found. Training Rasa model..."
+# --- CRITICAL: Production Training Step ---
+# If no model exists, train one immediately.
+# This ensures we NEVER start without a model.
+if [ -z "$(ls -A models 2>/dev/null)" ]; then
+    echo "No models found. Starting mandatory training..."
     rasa train
-    LATEST_MODEL_FILE=$(ls -t models/*.tar.gz 2>/dev/null | head -n 1)
+else
+    echo "Model found. Skipping training."
 fi
 
-# Use absolute path for robustness
+# Explicitly find the latest model to avoid ambiguity
+LATEST_MODEL_FILE=$(ls -t models/*.tar.gz 2>/dev/null | head -n 1)
 MODEL_ABS_PATH="/app/backend/rasa/$LATEST_MODEL_FILE"
 echo "Using absolute model path: $MODEL_ABS_PATH"
 
