@@ -52,8 +52,10 @@ rasa run actions --port 5055 &
 # 2. Start Rasa Open Source
 # --model models: Loads latest model from directory (Prevents 400/409 errors)
 # --port 5005: Internal port
+echo "Checking for trained model..."
+ls -lh models/
 echo "Starting Rasa Open Source..."
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml --debug &
+python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
 
 # 3. Start Telegram Bot (Background)
 cd /app
