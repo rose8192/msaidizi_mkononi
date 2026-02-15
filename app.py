@@ -27,6 +27,8 @@ CORS(app)
 # Configuration
 RASA_URL = os.environ.get("RASA_URL", "http://127.0.0.1:5005/webhooks/rest/webhook")
 RASA_PARSE_URL = os.environ.get("RASA_PARSE_URL", "http://127.0.0.1:5005/model/parse")
+# Added local webhook for Rasa to avoid confusion with the Flask /webhooks route
+RASA_INTERNAL_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
 DB_PATH = os.path.join(os.getcwd(), 'analytics.db')
 
 # JWT Configuration
@@ -92,7 +94,6 @@ def test_rasa():
         }), 503
 
 @app.route('/chat', methods=['POST'])
-@app.route('/webhooks/rest/webhook', methods=['POST'])
 def rasa_proxy():
     payload = request.json
     if not payload:
@@ -113,7 +114,8 @@ def rasa_proxy():
         responses = []
         for attempt in range(3):
             try:
-                r = requests.post(RASA_URL, json=payload, timeout=30)
+                # Use RASA_INTERNAL_URL to ensure we hit the Rasa port 5005
+                r = requests.post(RASA_INTERNAL_URL, json=payload, timeout=30)
                 r.raise_for_status()
                 responses = r.json()
                 break
