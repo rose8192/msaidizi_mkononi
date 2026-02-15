@@ -269,8 +269,9 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
                 break
     return df.rename(columns=cols)
 
-@app.post("/chat")
-def chat(req: ChatRequest) -> Dict[str, Any]:
+@app.post("/chat_v2")
+def chat_v2(req: ChatRequest) -> Dict[str, Any]:
+    """Deprecated: Use app.py for chat proxying to avoid conflicts."""
     ensure_db()
     intent_data = rasa_parse_detailed(req.text)
     intent = intent_data.get("name")

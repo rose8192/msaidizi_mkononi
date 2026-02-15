@@ -25,10 +25,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-RASA_URL = os.environ.get("RASA_URL", "http://127.0.0.1:5005/webhooks/rest/webhook")
-RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
-# Force internal communication to the local Rasa port, ignoring any external environment variables
 RASA_INTERNAL_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
+RASA_URL = os.environ.get("RASA_URL", RASA_INTERNAL_URL)
+RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
 DB_PATH = os.path.join(os.getcwd(), 'analytics.db')
 
 # JWT Configuration
@@ -146,7 +145,7 @@ def rasa_proxy():
         # Internal container communication on port 5005
         # Correct endpoint is ALWAYS /webhooks/rest/webhook for REST input
         r = requests.post(
-            "http://127.0.0.1:5005/webhooks/rest/webhook",
+            RASA_INTERNAL_URL,
             json=rasa_payload,
             timeout=45 # Increased timeout for slow model cold starts
         )
