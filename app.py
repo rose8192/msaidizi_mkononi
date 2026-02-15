@@ -26,8 +26,8 @@ CORS(app)
 
 # Configuration
 RASA_URL = os.environ.get("RASA_URL", "http://127.0.0.1:5005/webhooks/rest/webhook")
-RASA_PARSE_URL = os.environ.get("RASA_PARSE_URL", "http://127.0.0.1:5005/model/parse")
-# Added local webhook for Rasa to avoid confusion with the Flask /webhooks route
+RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
+# Force internal communication to the local Rasa port, ignoring any external environment variables
 RASA_INTERNAL_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
 DB_PATH = os.path.join(os.getcwd(), 'analytics.db')
 

@@ -23,10 +23,11 @@ COPY . .
 # Create startup script correctly using a single RUN command
 RUN echo '#!/bin/bash' > /app/start.sh && \
     echo 'cd /app/backend/rasa' >> /app/start.sh && \
-    echo 'python -m rasa run actions --port 5055 &' >> /app/start.sh && \
-    echo 'python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --debug &' >> /app/start.sh && \
-    echo 'echo "Waiting for Rasa to start..."' >> /app/start.sh && \
-    echo 'for i in {1..24}; do' >> /app/start.sh && \
+    echo '# Force Rasa to ignore the PORT env var by unsetting it for these commands' >> /app/start.sh && \
+    echo 'PORT="" python -m rasa run actions --port 5055 &' >> /app/start.sh && \
+    echo 'PORT="" python -m rasa run --enable-api --cors "*" --port 5005 --model models --num-threads 1 --debug &' >> /app/start.sh && \
+    echo 'echo "Waiting for Rasa to start on port 5005..."' >> /app/start.sh && \
+    echo 'for i in {1..30}; do' >> /app/start.sh && \
     echo '  if curl -s http://127.0.0.1:5005/ > /dev/null; then' >> /app/start.sh && \
     echo '    echo "Rasa is ready!"' >> /app/start.sh && \
     echo '    break' >> /app/start.sh && \
@@ -35,7 +36,8 @@ RUN echo '#!/bin/bash' > /app/start.sh && \
     echo '  sleep 5' >> /app/start.sh && \
     echo 'done' >> /app/start.sh && \
     echo 'cd /app' >> /app/start.sh && \
-    echo 'gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 1 --timeout 120 app:app' >> /app/start.sh
+    echo 'echo "Starting Flask/Gunicorn on port $PORT..."' >> /app/start.sh && \
+    echo 'gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120 app:app' >> /app/start.sh
 
 RUN chmod +x /app/start.sh
 
