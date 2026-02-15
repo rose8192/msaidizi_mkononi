@@ -165,28 +165,32 @@ def smart_intent_guard(message):
 
         # 3. Rasa Intent Validation
         parse_payload = {"text": message}
-        r = requests.post(RASA_PARSE_URL, json=parse_payload, timeout=5)
-        r.raise_for_status()
-        parse_data = r.json()
-        
-        intent_data = parse_data.get("intent", {})
-        intent_name = intent_data.get("name")
-        confidence = intent_data.get("confidence", 0)
-        
-        # Get second intent for gap analysis
-        intent_ranking = parse_data.get("intent_ranking", [])
-        second_confidence = intent_ranking[1].get("confidence", 0) if len(intent_ranking) > 1 else 0
-        confidence_gap = confidence - second_confidence
-
-        # 4. Service Intent Specific Logic
-        if intent_name in SERVICE_INTENTS:
-            # Condition: Confidence check
-            if confidence < CONFIDENCE_THRESHOLD:
-                return False, "I'm not quite sure which service you are referring to. Could you please specify? (e.g., Passport application, KRA PIN) / Sina hakika ni huduma gani unayomaanisha. Tafadhali fafanua? (mfano: Maombi ya Pasipoti, KRA PIN)"
+        try:
+            r = requests.post(RASA_PARSE_URL, json=parse_payload, timeout=10)
+            r.raise_for_status()
+            parse_data = r.json()
             
-            # Condition: Confidence gap check
-            if confidence_gap < CONFIDENCE_GAP_THRESHOLD:
-                return False, "I'm hearing a few different things. Could you please clarify your request? / Nasikia mambo tofauti. Tafadhali fafanua ombi lako?"
+            intent_data = parse_data.get("intent", {})
+            intent_name = intent_data.get("name")
+            confidence = intent_data.get("confidence", 0)
+            
+            # Get second intent for gap analysis
+            intent_ranking = parse_data.get("intent_ranking", [])
+            second_confidence = intent_ranking[1].get("confidence", 0) if len(intent_ranking) > 1 else 0
+            confidence_gap = confidence - second_confidence
+
+            # 4. Service Intent Specific Logic
+            if intent_name in SERVICE_INTENTS:
+                # Condition: Confidence check
+                if confidence < CONFIDENCE_THRESHOLD:
+                    return False, "I'm not quite sure which service you are referring to. Could you please specify? (e.g., Passport application, KRA PIN) / Sina hakika ni huduma gani unayomaanisha. Tafadhali fafanua? (mfano: Maombi ya Pasipoti, KRA PIN)"
+                
+                # Condition: Confidence gap check
+                if confidence_gap < CONFIDENCE_GAP_THRESHOLD:
+                    return False, "I'm hearing a few different things. Could you please clarify your request? / Nasikia mambo tofauti. Tafadhali fafanua ombi lako?"
+        except Exception as parse_err:
+            print(f"[GUARD ERROR] Intent parsing failed: {parse_err}. Proceeding without guard.")
+            return True, None
 
             # Condition: Short keyword check (Ambiguity check)
             # If it's a service intent but only 1-2 words (e.g., "kra pin"), ask for confirmation
