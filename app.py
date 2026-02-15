@@ -14,9 +14,17 @@ CORS(app) # Enable CORS for all routes
 # Health check route
 @app.route('/', methods=['GET'])
 def health_check():
+    rasa_status = "Unknown"
+    try:
+        r = requests.get(RASA_URL.replace('/webhooks/rest/webhook', '/'), timeout=5)
+        rasa_status = "Reachable" if r.status_code == 200 else f"Error: {r.status_code}"
+    except Exception as e:
+        rasa_status = f"Unreachable: {str(e)}"
+        
     return jsonify({
         "status": "Msaidizi Mkononi backend is running",
         "rasa_url": RASA_URL,
+        "rasa_status": rasa_status,
         "timestamp": time.time()
     }), 200
 
