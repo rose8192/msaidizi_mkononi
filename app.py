@@ -10,9 +10,34 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 
+# Configuration and Constants
+RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
+RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
+SERVICE_INTENTS = [
+    "kra_info", "shif_info", "huduma_info", "ntsa_info", 
+    "police_clearance_info", "business_reg_info", "helb_info",
+    "hospital_search", "huduma_locator"
+]
+CONFIDENCE_THRESHOLD = 0.75
+CONFIDENCE_GAP_THRESHOLD = 0.1
+NEGATION_WORDS = ["sitaki", "sihitaji", "hapana", "no", "not", "don't", "do not", "cancel", "stop"]
+
 print("[INIT] Starting Flask App...")
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
+
+# Global Error Handler for debugging
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Handle all unhandled exceptions and return them as JSON."""
+    import traceback
+    print(f"[CRITICAL ERROR] {str(e)}")
+    print(traceback.format_exc())
+    return jsonify({
+        "error": "Internal Server Error",
+        "message": str(e),
+        "type": type(e).__name__
+    }), 500
 
 # JWT Configuration
 app.config['JWT_SECRET_KEY'] = 'msaidizi-mkononi-secret-2026'
@@ -55,6 +80,10 @@ def test_rasa():
 @app.route('/webhooks/rest/webhook', methods=['POST'])
 def rasa_proxy():
     payload = request.json
+    if not payload:
+        print("[CHAT ERROR] No JSON payload received")
+        return jsonify([{"text": "Error: No message received. / Kosa: Hakuna ujumbe uliopokelewa."}]), 400
+        
     sender = payload.get('sender', 'unknown')
     message = payload.get('message', '')
     
@@ -70,7 +99,7 @@ def rasa_proxy():
         # Forward to Rasa with Retry Logic for Cold Starts
         max_retries = 3
         retry_delay = 2
-        responses = None
+        responses = [] # Default to empty list
         
         for attempt in range(max_retries):
             try:
@@ -78,6 +107,9 @@ def rasa_proxy():
                 r = requests.post(RASA_URL, json=payload, timeout=45)
                 r.raise_for_status()
                 responses = r.json()
+                if not isinstance(responses, list):
+                    print(f"[RASA WARNING] Expected list, got {type(responses)}")
+                    responses = []
                 print(f"[RASA] Success! Received {len(responses)} responses.")
                 break
             except (requests.exceptions.RequestException, ValueError) as e:
@@ -93,7 +125,10 @@ def rasa_proxy():
 
     except Exception as e:
         print(f"[PROXY ERROR] Final failure: {e}")
-        return jsonify([{"text": f"Backend Error: {str(e)}"}]), 503
+        # If it's a timeout or connection error, return 503, otherwise let the global handler catch it
+        if "Connection" in str(e) or "timeout" in str(e).lower():
+             return jsonify([{"text": "Backend is still starting up. Please try again in 30 seconds. / Backend bado inawaka. Tafadhali jaribu tena baada ya sekunde 30."}]), 503
+        raise # Re-raise for global error handler
 
 def log_interaction(sender, message, responses):
     """Logs the interaction to the SQLite database for the analytics dashboard."""
@@ -224,19 +259,6 @@ except Exception as e:
     print(f"[INIT ERROR] Africa's Talking failed to initialize: {e}")
 
 SHORTCODE = "1184"
-# Rasa Configuration (Local communication within Docker)
-RASA_URL = "http://127.0.0.1:5005/webhooks/rest/webhook"
-RASA_PARSE_URL = "http://127.0.0.1:5005/model/parse"
-
-# Configuration for Smart Intent Guard
-SERVICE_INTENTS = [
-    "kra_info", "shif_info", "huduma_info", "ntsa_info", 
-    "police_clearance_info", "business_reg_info", "helb_info",
-    "hospital_search", "huduma_locator"
-]
-CONFIDENCE_THRESHOLD = 0.75
-CONFIDENCE_GAP_THRESHOLD = 0.1
-NEGATION_WORDS = ["sitaki", "sihitaji", "hapana", "no", "not", "don't", "do not", "cancel", "stop"]
 
 def detect_negation(message):
     """Detects negation words in the message."""
