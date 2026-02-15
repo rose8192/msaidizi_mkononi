@@ -10,6 +10,7 @@ requests
 pandas
 python-dotenv
 flask-cors
+flask-jwt-extended
 aiofiles
 python-multipart
 structlog
