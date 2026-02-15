@@ -14,6 +14,7 @@ CORS(app) # Enable CORS for all routes
 # Health check route
 @app.route('/', methods=['GET'])
 def health_check():
+    print("[HEALTH] Check requested")
     return jsonify({
         "status": "Msaidizi Mkononi backend is running",
         "timestamp": time.time()
@@ -22,16 +23,20 @@ def health_check():
 @app.route('/test-rasa', methods=['GET'])
 def test_rasa():
     results = {}
+    # Use internal IP to avoid any potential localhost resolution issues
+    RASA_BASE = "http://127.0.0.1:5005"
+    
     # Test 1: Root
     try:
-        r1 = requests.get(RASA_URL.replace('/webhooks/rest/webhook', '/'), timeout=5)
+        r1 = requests.get(RASA_BASE + "/", timeout=5)
         results["root"] = {"status": r1.status_code}
     except Exception as e:
         results["root"] = {"error": str(e)}
         
     # Test 2: Webhook
     try:
-        r2 = requests.post(RASA_URL, json={"sender": "test", "message": "hi"}, timeout=5)
+        r2 = requests.post(RASA_BASE + "/webhooks/rest/webhook", 
+                          json={"sender": "test", "message": "hi"}, timeout=5)
         results["webhook"] = {"status": r2.status_code, "body": r2.text}
     except Exception as e:
         results["webhook"] = {"error": str(e)}
