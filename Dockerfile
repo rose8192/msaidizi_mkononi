@@ -1,6 +1,9 @@
 # Use a lightweight Python image
 FROM python:3.10-slim
 
+# Force Python unbuffered mode for immediate logs
+ENV PYTHONUNBUFFERED=1
+
 # Install system dependencies (Minimal)
 RUN apt-get update && apt-get install -y \
     curl \
@@ -56,6 +59,10 @@ python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoint
 cd /app
 echo "Starting Telegram Bot..."
 python telegram_bot.py &
+
+# Wait for services to initialize
+echo "Waiting 10s for Rasa to initialize..."
+sleep 10
 
 # 4. Start Flask/Gunicorn (Foreground)
 # This MUST bind to $RENDER_PORT to pass health checks
