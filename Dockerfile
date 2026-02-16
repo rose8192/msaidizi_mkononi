@@ -57,11 +57,6 @@ ls -lh models/
 echo "Starting Rasa Open Source..."
 python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
 
-# 3. Start Telegram Bot (Background)
-cd /app
-echo "Starting Telegram Bot..."
-python telegram_bot.py &
-
 # Wait for services to initialize
 echo "Waiting for Rasa to be ready..."
 # Loop until Rasa's /status endpoint returns 200 OK (max 60 seconds)
@@ -73,6 +68,12 @@ for i in {1..12}; do
     echo "Waiting for Rasa... ($i/12)"
     sleep 5
 done
+
+# 3. Start Telegram Bot (Background)
+cd /app
+echo "Starting Telegram Bot..."
+python telegram_bot.py &
+
 
 # 4. Start Flask/Gunicorn (Foreground)
 # This MUST bind to $RENDER_PORT to pass health checks
