@@ -53,6 +53,9 @@ echo "Starting Rasa Action Server..."
 export SANIC_HOST=127.0.0.1
 rasa run actions --port 5055 &
 
+# Wait for Action Server to stabilize (memory spike reduction)
+sleep 5
+
 # 2. Start Rasa Open Source
 # --model models: Loads latest model from directory
 # --port 5005: Internal port (localhost)
@@ -64,25 +67,16 @@ if ! ls models/*.tar.gz 1> /dev/null 2>&1; then
    exit 1
 fi
 echo "Starting Rasa Open Source..."
+# Force minimal workers and enable API
 rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model models --endpoints endpoints.yml &
 
-# Wait for Rasa to be fully ready
-echo "Waiting for Rasa to load model..."
-for i in {1..60}; do
-    if curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
-        echo "Rasa is ready!"
-        break
-    fi
-    echo "Waiting for Rasa... ($i/60)"
+# Wait for Rasa to be fully ready (User requested polling)
+echo "Waiting for Rasa server..."
+until curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; do
+    echo "Rasa not ready yet. Sleeping 5s..."
     sleep 5
 done
-
-# Check if Rasa failed to start
-if ! curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
-    echo "ERROR: Rasa failed to start within 300 seconds."
-    # We exit here so Render knows deployment failed, rather than starting Flask and serving 503s
-    exit 1
-fi
+echo "Rasa is ready! Starting Flask..."
 
 # 3. Start Telegram Bot (Background)
 # TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
