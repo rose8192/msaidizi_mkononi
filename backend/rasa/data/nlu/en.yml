@@ -41,6 +41,11 @@ nlu:
       - i am not interested
       - sitaki
       - sihitaji
+      - I do not want a passport
+      - I do not want an ID
+      - no birth certificate
+      - I don't need a death certificate
+      - cancel passport application
   - intent: affirm
     examples: |
       - yes

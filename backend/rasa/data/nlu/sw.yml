@@ -35,6 +35,12 @@ nlu:
       - acha
       - sitaki
       - sihitaji
+      - sitaki passport
+      - sitaki pasipoti
+      - sitaki cheti cha kuzaliwa
+      - sitaki cheti cha kifo
+      - sitaki cheti cha ndoa
+      - sihitaji kitambulisho
   - intent: affirm
     examples: |
       - ndiyo
