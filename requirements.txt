@@ -1,7 +1,7 @@
 # Core Services - Pinned for Stability
 rasa==3.6.21
 rasa-sdk==3.6.2
-tensorflow==2.11.0
+tensorflow==2.12.0
 SQLAlchemy==1.4.47
 wheel
 

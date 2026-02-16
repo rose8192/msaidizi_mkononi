@@ -24,6 +24,9 @@ RUN pip install --no-cache-dir gunicorn
 # Copy project files
 COPY . .
 
+# Ensure data directories exist for Action Server (SQLite, etc.)
+RUN mkdir -p /app/backend/data
+
 # Create startup script correctly using a single RUN command
 # Deployment Timestamp: 2026-02-15 14:00:00
 # --- PRODUCTION BUILD STEP ---
