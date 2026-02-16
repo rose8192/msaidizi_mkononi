@@ -177,7 +177,8 @@ def rasa_proxy():
 
     except requests.exceptions.ConnectionError:
         logger.error(f"Could not connect to Rasa server at {RASA_INTERNAL_URL}")
-        return jsonify([{"text": "AI engine is starting up. Please try again in 10 seconds."}]), 503
+        # Return 200 so the user sees the message in the chat UI
+        return jsonify([{"text": "System is initializing (warming up)... please try again in 10 seconds."}]), 200
     except Exception as e:
         logger.error(f"Proxy unexpected error: {e}")
         return jsonify([{"text": "Communication failure. Please try again later."}]), 500

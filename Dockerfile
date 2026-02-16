@@ -70,14 +70,6 @@ echo "Starting Rasa Open Source..."
 # Force minimal workers and enable API
 rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model models --endpoints endpoints.yml &
 
-# Wait for Rasa to be fully ready (User requested polling)
-echo "Waiting for Rasa server..."
-until curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; do
-    echo "Rasa not ready yet. Sleeping 5s..."
-    sleep 5
-done
-echo "Rasa is ready! Starting Flask..."
-
 # 3. Start Telegram Bot (Background)
 # TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
 # cd /app
@@ -86,7 +78,7 @@ echo "Rasa is ready! Starting Flask..."
 
 # 4. Start Flask/Gunicorn (Foreground)
 # Start immediately to satisfy Render port detection (port 10000)
-# Rasa will load in the background; Flask will return 503 until Rasa is ready.
+# Flask will handle Rasa unavailability gracefully
 echo "Starting Flask/Gunicorn on port $RENDER_PORT..."
 cd /app
 gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 1 --timeout 120 --access-logfile - --error-logfile - app:app
