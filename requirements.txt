@@ -3,7 +3,6 @@ rasa==3.6.21
 rasa-sdk==3.6.2
 tensorflow==2.11.0
 SQLAlchemy==1.4.47
-setuptools==65.5.0
 wheel
 
 # Web Server
