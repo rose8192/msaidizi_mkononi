@@ -56,7 +56,7 @@ rasa run actions --port 5055 &
 # --port 5005: Internal port
 echo "Checking for trained model..."
 ls -lh models/
-if [ -z "$(ls -A models)" ]; then
+if ! ls models/*.tar.gz 1> /dev/null 2>&1; then
    echo "ERROR: No model found in models/ directory!"
    exit 1
 fi
@@ -76,9 +76,10 @@ for i in {1..12}; do
 done
 
 # 3. Start Telegram Bot (Background)
-cd /app
-echo "Starting Telegram Bot..."
-python telegram_bot.py &
+# TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
+# cd /app
+# echo "Starting Telegram Bot..."
+# python telegram_bot.py &
 
 
 # 4. Start Flask/Gunicorn (Foreground)
