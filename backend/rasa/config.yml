@@ -21,8 +21,4 @@ policies:
 - name: MemoizationPolicy
   max_history: 3
 - name: RulePolicy
-- name: TEDPolicy
-  max_history: 3
-  epochs: 20
-  constrain_similarities: true
 assistant_id: 20260208-135131-ash-upstream
