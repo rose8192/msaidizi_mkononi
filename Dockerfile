@@ -48,12 +48,15 @@ unset PORT
 
 # --- FINAL CORRECT ARCHITECTURE ---
 # 1. Start Action Server
+# Use localhost to prevent Render from detecting port 5055
 echo "Starting Rasa Action Server..."
+export SANIC_HOST=127.0.0.1
 rasa run actions --port 5055 &
 
 # 2. Start Rasa Open Source
-# --model models: Loads latest model from directory (Prevents 400/409 errors)
-# --port 5005: Internal port
+# --model models: Loads latest model from directory
+# --port 5005: Internal port (localhost)
+# --interface 127.0.0.1: Force internal binding
 echo "Checking for trained model..."
 ls -lh models/
 if ! ls models/*.tar.gz 1> /dev/null 2>&1; then
@@ -61,19 +64,7 @@ if ! ls models/*.tar.gz 1> /dev/null 2>&1; then
    exit 1
 fi
 echo "Starting Rasa Open Source..."
-rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
-
-# Wait for services to initialize
-echo "Waiting for Rasa to be ready..."
-# Loop until Rasa's /status endpoint returns 200 OK (max 60 seconds)
-for i in {1..12}; do
-    if curl -s http://localhost:5005/status | grep "ok" > /dev/null; then
-        echo "Rasa is ready!"
-        break
-    fi
-    echo "Waiting for Rasa... ($i/12)"
-    sleep 5
-done
+rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model models --endpoints endpoints.yml &
 
 # 3. Start Telegram Bot (Background)
 # TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
@@ -81,9 +72,9 @@ done
 # echo "Starting Telegram Bot..."
 # python telegram_bot.py &
 
-
 # 4. Start Flask/Gunicorn (Foreground)
-# This MUST bind to $RENDER_PORT to pass health checks
+# Start immediately to satisfy Render port detection (port 10000)
+# Rasa will load in the background; Flask will return 503 until Rasa is ready.
 echo "Starting Flask/Gunicorn on port $RENDER_PORT..."
 cd /app
 gunicorn --bind 0.0.0.0:$RENDER_PORT --workers 1 --threads 1 --timeout 120 --access-logfile - --error-logfile - app:app
