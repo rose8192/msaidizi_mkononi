@@ -1,17 +1,29 @@
 version: "3.1"
 language: "en"
 
-# EMERGENCY PLAN B: Minimal DIET to bypass data conflicts
-# Epochs=1 for instant training/loading
+# EMERGENCY PLAN D: Ultra-Minimal DIET for MINIMAL MEMORY
+# Single layer, minimal dimensions
 pipeline:
 - name: WhitespaceTokenizer
 - name: CountVectorsFeaturizer
 - name: DIETClassifier
-  epochs: 5
+  epochs: 10
+  transformer_layers: 1
+  number_of_attention_heads: 1
+  use_masked_language_model: false
+  embedding_dimension: 10
+  hidden_layer_sizes:
+    text: [16]
   constrain_similarities: true
 - name: EntitySynonymMapper
 - name: ResponseSelector
-  epochs: 5
+  epochs: 10
+  transformer_layers: 1
+  number_of_attention_heads: 1
+  use_masked_language_model: false
+  embedding_dimension: 10
+  hidden_layer_sizes:
+    text: [16]
   constrain_similarities: true
 - name: FallbackClassifier
   threshold: 0.3
