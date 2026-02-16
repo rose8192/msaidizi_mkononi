@@ -66,6 +66,24 @@ fi
 echo "Starting Rasa Open Source..."
 rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model models --endpoints endpoints.yml &
 
+# Wait for Rasa to be fully ready
+echo "Waiting for Rasa to load model..."
+for i in {1..30}; do
+    if curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
+        echo "Rasa is ready!"
+        break
+    fi
+    echo "Waiting for Rasa... ($i/30)"
+    sleep 2
+done
+
+# Check if Rasa failed to start
+if ! curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
+    echo "ERROR: Rasa failed to start within 60 seconds."
+    # We exit here so Render knows deployment failed, rather than starting Flask and serving 503s
+    exit 1
+fi
+
 # 3. Start Telegram Bot (Background)
 # TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
 # cd /app
