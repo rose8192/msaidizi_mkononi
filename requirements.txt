@@ -1,6 +1,6 @@
 # Core Services - Pinned for Stability
-rasa==3.5.10
-rasa-sdk==3.5.1
+rasa==3.6.21
+rasa-sdk==3.6.2
 tensorflow==2.11.0
 SQLAlchemy==1.4.47
 setuptools==65.5.0
