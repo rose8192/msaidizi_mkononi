@@ -68,18 +68,18 @@ rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model model
 
 # Wait for Rasa to be fully ready
 echo "Waiting for Rasa to load model..."
-for i in {1..30}; do
+for i in {1..60}; do
     if curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
         echo "Rasa is ready!"
         break
     fi
-    echo "Waiting for Rasa... ($i/30)"
-    sleep 2
+    echo "Waiting for Rasa... ($i/60)"
+    sleep 5
 done
 
 # Check if Rasa failed to start
 if ! curl -s http://127.0.0.1:5005/status | grep "ok" > /dev/null; then
-    echo "ERROR: Rasa failed to start within 60 seconds."
+    echo "ERROR: Rasa failed to start within 300 seconds."
     # We exit here so Render knows deployment failed, rather than starting Flask and serving 503s
     exit 1
 fi
