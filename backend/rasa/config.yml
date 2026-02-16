@@ -1,22 +1,22 @@
 version: "3.1"
 language: "en"
+
+# EMERGENCY PLAN B: Minimal DIET to bypass data conflicts
+# Epochs=1 for instant training/loading
 pipeline:
 - name: WhitespaceTokenizer
-# - name: LexicalSyntacticFeaturizer
 - name: CountVectorsFeaturizer
-  analyzer: word
-  min_ngram: 1
-  max_ngram: 1
 - name: DIETClassifier
-  epochs: 20
+  epochs: 5
   constrain_similarities: true
 - name: EntitySynonymMapper
 - name: ResponseSelector
-  epochs: 20
+  epochs: 5
   constrain_similarities: true
 - name: FallbackClassifier
-  threshold: 0.7
+  threshold: 0.3
   ambiguity_threshold: 0.1
+
 policies:
 - name: MemoizationPolicy
   max_history: 3
