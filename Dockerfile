@@ -53,8 +53,12 @@ rasa run actions --port 5055 &
 # --port 5005: Internal port
 echo "Checking for trained model..."
 ls -lh models/
+if [ -z "$(ls -A models)" ]; then
+   echo "ERROR: No model found in models/ directory!"
+   exit 1
+fi
 echo "Starting Rasa Open Source..."
-python -m rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
+rasa run --enable-api --cors "*" --port 5005 --model models --endpoints endpoints.yml &
 
 # Wait for services to initialize
 echo "Waiting for Rasa to be ready..."
