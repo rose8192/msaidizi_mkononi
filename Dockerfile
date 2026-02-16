@@ -27,9 +27,8 @@ COPY . .
 # Create startup script correctly using a single RUN command
 # Deployment Timestamp: 2026-02-15 14:00:00
 # --- PRODUCTION BUILD STEP ---
-# Train model during image build if not present
-# This moves the heavy lifting to build time, preventing runtime OOM kills
-RUN cd /app/backend/rasa && rasa train --force
+# Model is now trained locally and committed to Git.
+# No build-time training to save memory and time.
 
 RUN cat <<'EOF' > /app/start.sh
 #!/bin/bash
