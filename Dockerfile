@@ -71,10 +71,9 @@ echo "Starting Rasa Open Source..."
 rasa run --enable-api --cors "*" --port 5005 --interface 127.0.0.1 --model models --endpoints endpoints.yml &
 
 # 3. Start Telegram Bot (Background)
-# TEMPORARILY DISABLED TO REDUCE MEMORY USAGE
-# cd /app
-# echo "Starting Telegram Bot..."
-# python telegram_bot.py &
+cd /app
+echo "Starting Telegram Bot..."
+python telegram_bot.py &
 
 # 4. Start Flask/Gunicorn (Foreground)
 # Start immediately to satisfy Render port detection (port 10000)
