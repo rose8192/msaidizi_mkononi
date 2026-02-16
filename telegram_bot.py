@@ -5,6 +5,7 @@ import os
 import time
 import tempfile
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.exceptions import TerminatedByOtherGetUpdates
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
 import aiohttp
 from pydub import AudioSegment
@@ -218,6 +219,9 @@ if __name__ == '__main__':
             asyncio.set_event_loop(loop)
             logging.info("Starting bot polling...")
             executor.start_polling(dp, skip_updates=True)
+        except TerminatedByOtherGetUpdates:
+            logging.warning("Another bot instance is running (Deployment conflict). Waiting 10s for it to shut down...")
+            time.sleep(10)
         except Exception as e:
             logging.error(f"Bot crashed with error: {e}. Restarting in 5 seconds...")
             time.sleep(5)
