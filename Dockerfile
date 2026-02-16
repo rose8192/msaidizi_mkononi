@@ -63,8 +63,16 @@ echo "Starting Telegram Bot..."
 python telegram_bot.py &
 
 # Wait for services to initialize
-echo "Waiting 15s for Rasa to initialize..."
-sleep 15
+echo "Waiting for Rasa to be ready..."
+# Loop until Rasa's /status endpoint returns 200 OK (max 60 seconds)
+for i in {1..12}; do
+    if curl -s http://localhost:5005/status | grep "ok" > /dev/null; then
+        echo "Rasa is ready!"
+        break
+    fi
+    echo "Waiting for Rasa... ($i/12)"
+    sleep 5
+done
 
 # 4. Start Flask/Gunicorn (Foreground)
 # This MUST bind to $RENDER_PORT to pass health checks
